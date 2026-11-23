@@ -1,0 +1,233 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\BlogPost;
+use App\Models\BusinessUnit;
+use App\Models\CmsPage;
+use App\Models\Enquiry;
+use App\Models\Event;
+use App\Models\Faq;
+use App\Models\HeroSlide;
+use App\Models\Subscriber;
+use App\Models\TeamMember;
+use App\Models\Product;
+use App\Models\Promotion;
+use App\Models\Property;
+use App\Models\Service;
+use App\Models\Testimonial;
+use App\Models\User;
+use App\Notifications\EnquiryReceivedNotification;
+use App\Services\HeroImageService;
+use App\Services\SearchService;
+use App\Services\SettingsService;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+
+class PublicController extends Controller
+{
+    public function home(HeroImageService $hero)
+    {
+        $heroImage = $hero->pick();
+
+        // Slides come from Admin > Hero Slides. With none published, show one slide built from the hero settings.
+        $slides = HeroSlide::active()->limit(8)->get();
+        if ($slides->isEmpty()) {
+            $slides = collect([new HeroSlide([
+                'caption' => 'Boom & Wow Holdings',
+                'heading' => SettingsService::get('hero_title', 'One Destination. Endless Possibilities.'),
+                'subheading' => SettingsService::get('hero_subtitle', 'Discover exceptional services, products and experiences under one roof.'),
+                'cta_label' => 'Explore our businesses', 'cta_url' => '/businesses',
+                'cta2_label' => 'Contact us', 'cta2_url' => '/contact',
+            ])]);
+        }
+
+        $businesses = BusinessUnit::published()->with('hours')->orderBy('sort_order')->get();
+        $about = CmsPage::published()->where('slug', 'about-us')->first();
+
+        return view('public.home', [
+            'heroImage' => $heroImage,
+            'slides' => $slides,
+            'about' => $about,
+            'aboutExcerpt' => Str::limit(trim(preg_split('/\n\s*\n/', (string) ($about->content ?? ''))[0] ?? ''), 380)
+                ?: 'Boom & Wow Holdings brings together a salon, liquor store, IT consultants, property management and events management - all served by one team and one customer account.',
+            'businesses' => $businesses,
+            'stores' => $businesses->where('is_featured', true)->values(),
+            'stats' => [
+                'Businesses' => $businesses->count(),
+                'Services' => Service::published()->count(),
+                'Products' => Product::published()->count(),
+                'Upcoming events' => Event::published()->where('starts_at', '>=', now())->count(),
+            ],
+            'services' => Service::with('business')->published()->where('is_featured', true)->limit(6)->get(),
+            'products' => Product::with(['business', 'images'])->published()->where('is_featured', true)->limit(8)->get(),
+            'faqs' => Faq::published()->orderBy('sort_order')->limit(6)->get(),
+            'testimonials' => Testimonial::published()->latest()->limit(3)->get(),
+        ]);
+    }
+
+    public function subscribe(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email:rfc', 'max:255'],
+            'name' => ['nullable', 'string', 'max:150'],
+            'website' => ['prohibited'], // honeypot
+        ]);
+
+        $sub = Subscriber::firstOrNew(['email' => strtolower($data['email'])]);
+        $sub->fill(['name' => $data['name'] ?? $sub->name, 'is_active' => true, 'subscribed_at' => $sub->subscribed_at ?? now()])->save();
+
+        // Same message whether or not the address already existed (does not reveal who is subscribed).
+        return back()->with('status', 'Thanks for subscribing - watch your inbox for specials and news.');
+    }
+
+    public function page(string $slug)
+    {
+        $page = CmsPage::published()->where('slug', $slug)->firstOrFail();
+
+        return view('public.page', compact('page'));
+    }
+
+    public function about()
+    {
+        $page = CmsPage::published()->where('slug', 'about-us')->first();
+        $businesses = BusinessUnit::published()->orderBy('sort_order')->get();
+
+        return view('public.about', [
+            'page' => $page,
+            'paragraphs' => array_values(array_filter(preg_split('/\n\s*\n/', (string) ($page->content ?? '')) ?: [], fn ($p) => trim($p) !== '')),
+            'businesses' => $businesses,
+            'management' => TeamMember::published()->where('team_group', 'management')->orderBy('sort_order')->get(),
+            'team' => TeamMember::published()->where('team_group', 'team')->orderBy('sort_order')->get(),
+            'stats' => [
+                'Businesses' => $businesses->count(),
+                'Services' => Service::published()->count(),
+                'Products' => Product::published()->count(),
+                'Team members' => TeamMember::published()->count(),
+            ],
+            'faqs' => Faq::published()->orderBy('sort_order')->limit(6)->get(),
+            'testimonials' => Testimonial::published()->latest()->limit(3)->get(),
+        ]);
+    }
+    public function privacy() { return $this->page('privacy-policy'); }
+    public function terms() { return $this->page('terms-and-conditions'); }
+
+    public function faqs() { return view('public.faqs', ['faqs' => Faq::published()->orderBy('sort_order')->get()]); }
+
+    public function businesses() { return view('public.businesses', ['businesses' => BusinessUnit::published()->orderBy('sort_order')->get()]); }
+
+    public function business(BusinessUnit $business)
+    {
+        abort_unless($business->status === 'published', 404);
+        $business->load(['hours', 'staff' => fn ($q) => $q->where('is_active', true)]);
+
+        return view('public.business', [
+            'business' => $business,
+            'services' => $business->services()->published()->orderBy('name')->get(),
+            'products' => $business->sells_products ? $business->products()->with(['images', 'inventory'])->published()->limit(12)->get() : collect(),
+            'properties' => $business->properties()->published()->latest()->limit(6)->get(),
+            'events' => $business->events()->published()->where('starts_at', '>=', now())->orderBy('starts_at')->limit(6)->get(),
+            'portfolio' => $business->portfolioItems()->published()->limit(6)->get(),
+            'packages' => $business->packages()->where('status', 'published')->get(),
+        ]);
+    }
+
+    public function services(Request $request)
+    {
+        $services = Service::with('business')->published()
+            ->when($request->business, fn ($q, $b) => $q->whereHas('business', fn ($x) => $x->where('slug', $b)))
+            ->when($request->q, fn ($q, $t) => $q->where('name', 'like', '%'.addcslashes($t, '%_\\').'%'))
+            ->orderBy('name')->paginate(12)->withQueryString();
+
+        return view('public.services', ['services' => $services, 'businesses' => BusinessUnit::published()->get()]);
+    }
+
+    public function events() { return view('public.events', ['events' => Event::with('business')->published()->where('starts_at', '>=', now()->startOfDay())->orderBy('starts_at')->paginate(12)]); }
+
+    public function properties(Request $request)
+    {
+        $props = Property::with('business')->published()
+            ->when($request->listing, fn ($q, $l) => $q->where('listing_type', $l))
+            ->latest()->paginate(12)->withQueryString();
+
+        return view('public.properties', ['properties' => $props]);
+    }
+
+    public function property(Property $property)
+    {
+        abort_unless($property->status === 'published', 404);
+
+        return view('public.property', ['property' => $property->load('business')]);
+    }
+
+    public function event(Event $event)
+    {
+        abort_unless($event->status === 'published', 404);
+
+        return view('public.event', ['event' => $event->load('business')]);
+    }
+
+    public function search(Request $request, SearchService $search)
+    {
+        $term = trim((string) $request->query('q', ''));
+
+        return view('public.search', [
+            'term' => $term,
+            'results' => strlen($term) >= 2 ? $search->search($term) : [],
+        ]);
+    }
+
+    public function contact()
+    {
+        $lat = (float) SettingsService::get('contact_lat', -26.1076);
+        $lng = (float) SettingsService::get('contact_lng', 28.0567);
+
+        return view('public.contact', [
+            'businesses' => BusinessUnit::published()->with('hours')->orderBy('sort_order')->get(),
+            'faqs' => Faq::published()->orderBy('sort_order')->limit(5)->get(),
+            'lat' => $lat,
+            'lng' => $lng,
+            // OpenStreetMap embed: no API key or account needed.
+            'mapSrc' => sprintf('https://www.openstreetmap.org/export/embed.html?bbox=%s&layer=mapnik&marker=%s', implode('%2C', [round($lng - 0.012, 6), round($lat - 0.007, 6), round($lng + 0.012, 6), round($lat + 0.007, 6)]), $lat.'%2C'.$lng),
+            'directionsUrl' => 'https://www.google.com/maps/search/?api=1&query='.$lat.','.$lng,
+        ]);
+    }
+
+    /** Contact page, storefront and property/event enquiry forms all post here. */
+    public function storeEnquiry(Request $request)
+    {
+        $data = $request->validate([
+            'business_unit_id' => ['nullable', 'exists:business_units,id'],
+            'type' => ['required', 'in:general,project,support,viewing,event'],
+            'name' => ['required', 'string', 'max:150'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'subject_line' => ['nullable', 'string', 'max:200'],
+            'message' => ['required', 'string', 'max:3000'],
+            'subject_type' => ['nullable', 'in:property,event'],
+            'subject_id' => ['nullable', 'integer'],
+            'website' => ['prohibited'], // honeypot
+        ]);
+
+        $subjectClass = match ($data['subject_type'] ?? null) { 'property' => Property::class, 'event' => Event::class, default => null };
+        $enquiry = Enquiry::create([
+            ...collect($data)->except(['subject_type', 'subject_id', 'website'])->all(),
+            'user_id' => $request->user()?->id,
+            'subject_type' => $subjectClass,
+            'subject_id' => $subjectClass ? $data['subject_id'] : null,
+        ]);
+
+        $recipients = User::role('Super Admin')->get();
+        if ($enquiry->business_unit_id) {
+            $recipients = $recipients->merge($enquiry->business->users()->role('Business Manager')->get())->unique('id');
+        }
+        Notification::send($recipients, new EnquiryReceivedNotification($enquiry));
+
+        return back()->with('status', 'Thank you - your enquiry has been received. We will be in touch shortly.');
+    }
+
+    public function blog() { return view('public.blog', ['posts' => BlogPost::published()->latest('published_at')->paginate(9)]); }
+
+    public function blogPost(string $slug) { return view('public.blog-post', ['post' => BlogPost::published()->where('slug', $slug)->firstOrFail()]); }
+}

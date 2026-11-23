@@ -1,0 +1,55 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@source '../views/**/*.blade.php';
+@source '../js/**/*.js';
+
+/*
+ * Boom & Wow corporate identity - single source of truth for colours.
+ * Never hardcode hex values in views; use bg-brand-orange, text-brand-charcoal, etc.
+ */
+@theme {
+    --color-brand-orange: #F45422;
+    --color-brand-orange-dark: #D94316;
+    --color-brand-charcoal: #201E1F;
+    --color-brand-graphite: #393536;
+    --color-brand-white: #FFFFFF;
+    --color-brand-offwhite: #F5F5F4;
+
+    /* Friendly, rounded "retail store" type: Fredoka for headings, Nunito for body text. */
+    --font-sans: 'Nunito', ui-rounded, ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fredoka', 'Nunito', ui-rounded, ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+    html { scroll-behavior: smooth; }
+    body { @apply bg-brand-white text-brand-charcoal font-sans antialiased; }
+    h1, h2, h3 { @apply font-display font-semibold text-brand-charcoal; }
+    [x-cloak] { display: none !important; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+}
+
+/* Tailwind 4: a class that other classes @apply must be declared as a @utility. */
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2;
+}
+
+@utility no-scrollbar {
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+}
+
+@layer components {
+    .btn-primary { @apply btn bg-brand-orange text-brand-white shadow-sm hover:bg-brand-orange-dark hover:shadow-md; }
+    .btn-dark { @apply btn bg-brand-charcoal text-brand-white hover:bg-brand-graphite; }
+    .btn-outline { @apply btn border-2 border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-brand-white; }
+    .btn-outline-light { @apply btn border-2 border-brand-white text-brand-white hover:bg-brand-white hover:text-brand-charcoal; }
+    .btn-light { @apply btn bg-brand-white text-brand-charcoal hover:bg-brand-offwhite; }
+    .card { @apply rounded-2xl bg-brand-white shadow-sm ring-1 ring-black/5 transition duration-200 hover:shadow-lg; }
+    .input { @apply block w-full rounded-xl border-gray-300 text-sm shadow-sm focus:border-brand-orange focus:ring-brand-orange; }
+    .label { @apply mb-1 block text-sm font-semibold text-brand-graphite; }
+    .section { @apply mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8; }
+    .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-brand-orange; }
+    .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+    .chip { @apply inline-flex items-center gap-1.5 rounded-full bg-brand-offwhite px-3 py-1 text-xs font-bold text-brand-graphite; }
+}
