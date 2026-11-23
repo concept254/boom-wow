@@ -20,8 +20,11 @@ return [
     ],
 
     'logo' => [
-        'light' => 'images/logo.jpg',        // official logo, for light backgrounds
-        'dark' => 'images/logo-dark.png',    // optional variant for dark surfaces (see ADMIN_GUIDE)
+        'light' => 'images/logo.svg',        // vector logo (transparent) for light backgrounds
+        'dark' => 'images/logo-dark.svg',    // vector logo for dark surfaces (header, footer)
+        'mark_light' => 'images/logo-mark.svg',      // emblem only (no name line), for tight spaces
+        'mark_dark' => 'images/logo-mark-dark.svg',
+        'fallback' => 'images/logo.jpg',     // original client JPG, used only if the SVGs are missing
     ],
 
     'booking' => [

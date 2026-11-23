@@ -59,4 +59,4 @@ Set `LIQUOR_AGE_GATE=true` and `LIQUOR_MIN_AGE=18` in `.env`.
 Emails: registration/verification, booking confirmation and reminders, order confirmation/updates, enquiry received, low stock. All are also stored in-app. Configure SMTP in `.env`; with `MAIL_MAILER=log` they are written to `storage/logs/laravel.log`.
 
 ## Hero image & logo
-Add images to `public/images/hero/` or via Media Library. The official logo is `public/images/logo.jpg`; to improve dark areas add a transparent light logo as `public/images/logo-dark.png`.
+Add images to `public/images/hero/` or via Media Library. The logo is a transparent SVG (`public/images/logo.svg` for light surfaces, `logo-dark.svg` for the dark header/footer), traced from the client's print JPG with the tagline removed. Favicons: `public/favicon.ico`, `images/favicon.svg`, `apple-touch-icon.png`. If the client later supplies an official vector, replace those files keeping the same names. The original JPG stays as `logo.jpg` and is only a fallback.

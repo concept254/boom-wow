@@ -1,20 +1,28 @@
-@props(['variant' => 'light', 'class' => 'h-10 w-auto'])
+@props(['variant' => 'light', 'class' => 'h-10 w-auto', 'mark' => false])
 @php
-    // The official logo is a JPG on a white background. On dark surfaces we use the optional
-    // dark variant if one has been supplied; otherwise the original is shown unaltered on a white chip.
+    // Vector logos with transparent backgrounds (traced from the client's print JPG, tagline removed).
+    // 'dark' is for dark surfaces such as the header and footer. If an SVG is missing we fall back to
+    // the original JPG (on a white chip for dark surfaces) so the site never shows a broken image.
     $darkPath = config('boomwow.logo.dark');
     $lightPath = config('boomwow.logo.light');
-    $useDark = $variant === 'dark' && $darkPath && file_exists(public_path($darkPath));
-    $path = $useDark ? $darkPath : $lightPath;
-    $exists = $path && file_exists(public_path($path));
-    $chip = $variant === 'dark' && ! $useDark;
+    $fallback = config('boomwow.logo.fallback');
+    $wanted = $mark
+        ? ($variant === 'dark' ? config('boomwow.logo.mark_dark') : config('boomwow.logo.mark_light'))
+        : ($variant === 'dark' ? $darkPath : $lightPath);
+    if (! $wanted || ! file_exists(public_path($wanted))) {
+        $wanted = $variant === 'dark' ? $darkPath : $lightPath;
+    }
+    $path = $wanted && file_exists(public_path($wanted)) ? $wanted : null;
+    $chip = false;
+    if (! $path && $fallback && file_exists(public_path($fallback))) {
+        $path = $fallback;
+        $chip = $variant === 'dark';
+    }
 @endphp
-@if ($exists)
-    @if ($chip)
-        <span class="inline-flex rounded-md bg-brand-white p-1.5"><img src="{{ asset($path) }}" alt="Boom &amp; Wow Holdings" {{ $attributes->merge(['class' => $class]) }}></span>
-    @else
-        <img src="{{ asset($path) }}" alt="Boom &amp; Wow Holdings" {{ $attributes->merge(['class' => $class]) }}>
-    @endif
+@if ($path && $chip)
+    <span class="inline-flex rounded-md bg-brand-white p-1.5"><img src="{{ asset($path) }}" alt="Boom &amp; Wow Holdings" {{ $attributes->merge(['class' => $class]) }}></span>
+@elseif ($path)
+    <img src="{{ asset($path) }}" alt="Boom &amp; Wow Holdings" {{ $attributes->merge(['class' => $class]) }}>
 @else
     <span {{ $attributes->merge(['class' => 'font-display text-xl font-bold tracking-tight '.($variant === 'dark' ? 'text-brand-white' : 'text-brand-charcoal')]) }}>Boom <span class="text-brand-orange">&amp;</span> Wow</span>
 @endif

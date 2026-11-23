@@ -49,7 +49,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
     <title>{{ $title ?? 'Admin' }} · Boom &amp; Wow Admin</title>
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link href="https://fonts.bunny.net/css?family=nunito:400,600,700,800|fredoka:400,500,600,700" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -57,7 +59,7 @@
     <div class="flex min-h-screen">
         <aside class="fixed inset-y-0 left-0 z-40 w-64 -translate-x-full overflow-y-auto bg-brand-charcoal text-brand-white transition-transform lg:translate-x-0" :class="{ 'translate-x-0': nav }" aria-label="Admin navigation">
             <div class="flex items-center justify-center border-b border-brand-graphite bg-brand-white p-4">
-                <a href="{{ route('admin.dashboard') }}"><x-logo variant="light" class="h-12 w-auto" /></a>
+                <a href="{{ route('admin.dashboard') }}"><x-logo variant="light" class="h-14 w-auto" /></a>
             </div>
             <nav class="space-y-0.5 p-3 text-sm">
                 @foreach ($visible as [$label, $url])

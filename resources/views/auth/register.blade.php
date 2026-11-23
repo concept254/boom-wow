@@ -1,6 +1,6 @@
 @extends('layouts.app', ['title' => 'Register'])
 @section('content')
-<section class="mx-auto max-w-lg px-4 py-16"><div class="card p-8"><div class="mb-6 flex justify-center"><x-logo variant="light" class="h-12 w-auto" /></div>
+<section class="mx-auto max-w-lg px-4 py-16"><div class="card p-8"><div class="mb-6 flex justify-center"><x-logo variant="light" class="h-20 w-auto" /></div>
 <h1 class="text-2xl font-bold">Create your account</h1><p class="mt-1 text-sm text-brand-graphite">One account for all Boom &amp; Wow businesses.</p>
 <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4">@csrf
 <div class="grid gap-4 sm:grid-cols-2">@foreach ([['first_name', 'First name'], ['last_name', 'Last name']] as [$n, $l])<div><label class="label" for="{{ $n }}">{{ $l }}</label><input id="{{ $n }}" name="{{ $n }}" value="{{ old($n) }}" class="input" required>@error($n)<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>@endforeach</div>

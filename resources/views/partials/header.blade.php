@@ -1,7 +1,7 @@
 @php($menu = \App\Models\Menu::where('location', 'header')->where('is_active', true)->orderBy('sort_order')->get())
 <header class="sticky top-0 z-40 bg-brand-charcoal text-brand-white shadow" x-data="{ open: false }">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <a href="{{ route('home') }}" aria-label="Boom &amp; Wow Holdings home"><x-logo variant="dark" class="h-10 w-auto" /></a>
+        <a href="{{ route('home') }}" aria-label="Boom &amp; Wow Holdings home"><x-logo variant="dark" :mark="true" class="h-12 w-auto sm:h-16" /></a>
 
         <nav class="hidden items-center gap-6 text-sm lg:flex" aria-label="Main">
             @foreach ($menu as $item)
