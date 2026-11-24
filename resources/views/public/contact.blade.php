@@ -2,10 +2,7 @@
 @section('content')
 @php($s = fn ($k, $d = null) => \App\Services\SettingsService::get($k, $d))
 @php($days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
-<section class="bg-brand-charcoal text-brand-white"><div class="section !py-14">
-    <p class="eyebrow">Contact us</p><h1 class="mt-3 text-4xl !text-brand-white sm:text-5xl">We'd love to hear from you</h1>
-    <p class="mt-3 max-w-2xl text-lg text-gray-200">Visit us, call us, or send a message - the right team will get back to you.</p>
-</div></section>
+<x-page-header slug="contact" title="Contact us" subtitle="Visit us, call us, or send a message - the right team will get back to you." />
 
 {{-- Contact details --}}
 <section class="section !pb-6">

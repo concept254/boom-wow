@@ -1,12 +1,9 @@
 @extends('layouts.app', ['title' => $page->meta_title ?? 'About Us', 'description' => $page->meta_description ?? null])
 @section('content')
 {{-- Banner --}}
-<section class="bg-brand-charcoal text-brand-white"><div class="section !py-16">
-    <p class="eyebrow">About us</p>
-    <h1 class="mt-3 max-w-3xl text-4xl !text-brand-white sm:text-5xl">{{ $page->title ?? 'About Boom & Wow Holdings' }}</h1>
-    <p class="mt-4 max-w-2xl text-lg text-gray-200">One family of businesses, one customer account and one standard of service.</p>
+<x-page-header slug="about" :title="$page->title ?? 'About Boom & Wow Holdings'" subtitle="One family of businesses, one customer account and one standard of service." eyebrow="About us">
     <div class="mt-8 flex flex-wrap gap-3"><a href="{{ route('businesses') }}" class="btn-primary">Explore our businesses</a><a href="{{ route('contact') }}" class="btn-outline-light">Contact us</a></div>
-</div></section>
+</x-page-header>
 
 {{-- Story --}}
 <section class="section">
@@ -44,6 +41,9 @@
         @endforeach
     </div>
 </section>
+
+{{-- Brands --}}
+@include('public.partials.brands-carousel')
 
 {{-- Management & team (Admin > Team & Management) --}}
 @if ($management->isNotEmpty() || $team->isNotEmpty())

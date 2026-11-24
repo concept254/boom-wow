@@ -6,6 +6,6 @@
         <div><label class="sr-only" for="sub-name">Your name</label><input id="sub-name" name="name" class="input" placeholder="Your name (optional)" autocomplete="name"></div>
     @endunless
     <div><label class="sr-only" for="sub-email{{ $compact ? '-f' : '' }}">Email address</label><input id="sub-email{{ $compact ? '-f' : '' }}" type="email" name="email" class="input" placeholder="Your email address" required autocomplete="email"></div>
-    <button class="btn-dark">Subscribe</button>
+    <button class="{{ $compact ? 'btn-primary' : 'btn-dark' }}">Subscribe</button>
 </form>
 @error('email')<p class="mt-2 text-sm font-semibold text-brand-white">{{ $message }}</p>@enderror

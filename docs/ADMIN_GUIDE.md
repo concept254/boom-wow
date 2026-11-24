@@ -58,5 +58,17 @@ Set `LIQUOR_AGE_GATE=true` and `LIQUOR_MIN_AGE=18` in `.env`.
 ## Notifications
 Emails: registration/verification, booking confirmation and reminders, order confirmation/updates, enquiry received, low stock. All are also stored in-app. Configure SMTP in `.env`; with `MAIL_MAILER=log` they are written to `storage/logs/laravel.log`.
 
+## Adding a new business (no code needed)
+1. **Business Units → Add new**. Only the **Name** is required; the URL slug is built from it and 7 days of default opening hours are created for you (edit them under **Opening Hours**).
+2. **Category label** is free text shown on the site (e.g. "Clothing store"). **Enquiry form style** picks which enquiry form the business page shows (general, project, viewing, event, support).
+3. Tick **Accepts bookings** and/or **Sells products**, upload a logo and cover image (both optional), set **Status** to Published, and tick **Show in home page store carousel** to feature it.
+4. Add its services/products, and create a manager login under Users if it needs its own back-office staff. The home page count ("Six businesses") and the About page list update by themselves.
+
+## Page headers
+**Page Headers** controls the banner at the top of each public page: optional title and sub title overrides, an optional background image (upload or URL), and **Use fallback** (when ticked and no image is set, the site-wide *default* row's image or an online placeholder is used; untick for a plain dark banner). A dark overlay keeps the text readable. Set `PAGE_HEADER_FALLBACK_URL=` (empty) in `.env` to disable the online placeholder completely.
+
+## Brands (logo carousel)
+**Brands** feeds the scrolling logo strip on the home, About, Our businesses and Products pages, and per-business pages (brands linked to that business). Logo is optional (the brand name is shown without it). Untick **Show on the home page and About page** to keep a brand off those two pages. The strip hides itself when there are no brands.
+
 ## Hero image & logo
 Add images to `public/images/hero/` or via Media Library. The logo is a transparent SVG (`public/images/logo.svg` for light surfaces, `logo-dark.svg` for the dark header/footer), traced from the client's print JPG with the tagline removed. Favicons: `public/favicon.ico`, `images/favicon.svg`, `apple-touch-icon.png`. If the client later supplies an official vector, replace those files keeping the same names. The original JPG stays as `logo.jpg` and is only a fallback.

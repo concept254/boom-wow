@@ -1,10 +1,10 @@
 @extends('layouts.app', ['title' => $product->name])
 @section('content')
+<x-page-header :title="$product->name" :crumbs="[['Products', route('products')], [$business->name, route('business', $business)]]" />
 <section class="section grid gap-10 lg:grid-cols-2">
 <img src="{{ $product->images->first() ? \Illuminate\Support\Facades\Storage::disk('public')->url($product->images->first()->path) : 'https://picsum.photos/seed/'.$product->slug.'/800/600' }}" alt="{{ $product->name }}" class="w-full rounded-lg object-cover">
 <div>
 <a href="{{ route('business', $business) }}" class="eyebrow">{{ $business->name }}</a>
-<h1 class="mt-2 text-3xl font-bold">{{ $product->name }}</h1>
 <p class="mt-1 text-sm text-gray-500">{{ $product->brand }} {{ $product->size }} · SKU {{ $product->sku }}</p>
 <p class="mt-4 text-2xl font-semibold">@if($product->current_price != $product->price)<span class="text-base text-gray-400 line-through">R{{ number_format($product->price, 2) }}</span> @endif R{{ number_format($product->current_price, 2) }}</p>
 <p class="mt-4 text-brand-graphite">{{ $product->description }}</p>

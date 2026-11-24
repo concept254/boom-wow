@@ -121,7 +121,7 @@ The project is built to run on shared hosting. See [`docs/SHARED_HOSTING_DEPLOYM
 | Graphite | `#393536` |
 | Dark orange | `#D94316` |
 
-Fonts: Fredoka (headings) and Nunito (body). The logo is at `public/images/logo.jpg`.
+Fonts: Sora (headings) and DM Sans (body). The logo is at `public/images/logo.jpg`.
 
 ## Project structure
 

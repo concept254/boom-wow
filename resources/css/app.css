@@ -16,15 +16,16 @@
     --color-brand-white: #FFFFFF;
     --color-brand-offwhite: #F5F5F4;
 
-    /* Friendly, rounded "retail store" type: Fredoka for headings, Nunito for body text. */
-    --font-sans: 'Nunito', ui-rounded, ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Fredoka', 'Nunito', ui-rounded, ui-sans-serif, system-ui, sans-serif;
+    /* Sora (headings) + DM Sans (body): modern, geometric, not rounded. Both are loaded from fonts.bunny.net.
+       To change the look site-wide, edit these two lines and the font link in both layouts. */
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
+    --font-display: 'Sora', 'DM Sans', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
 }
 
 @layer base {
     html { scroll-behavior: smooth; }
     body { @apply bg-brand-white text-brand-charcoal font-sans antialiased; }
-    h1, h2, h3 { @apply font-display font-semibold text-brand-charcoal; }
+    h1, h2, h3, h4 { @apply font-display text-brand-charcoal; font-weight: 600 !important; letter-spacing: -0.02em; } /* !important: one consistent weight for every heading */
     [x-cloak] { display: none !important; }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 }
@@ -52,4 +53,18 @@
     .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-brand-orange; }
     .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold; }
     .chip { @apply inline-flex items-center gap-1.5 rounded-full bg-brand-offwhite px-3 py-1 text-xs font-bold text-brand-graphite; }
+}
+
+/* Brand logo carousel: pure CSS marquee, pauses on hover, static and wrapped for reduced-motion users. */
+@keyframes brand-marquee { to { transform: translateX(-50%); } }
+.brand-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+.brand-marquee__track { display: flex; width: max-content; align-items: center; animation: brand-marquee var(--marquee-duration, 40s) linear infinite; }
+.brand-marquee:hover .brand-marquee__track, .brand-marquee:focus-within .brand-marquee__track { animation-play-state: paused; }
+.brand-marquee__item { padding: 0 1.75rem; }
+.brand-marquee__link { display: flex; align-items: center; opacity: .75; filter: grayscale(1); transition: opacity .2s, filter .2s; }
+a.brand-marquee__link:hover, a.brand-marquee__link:focus-visible { opacity: 1; filter: none; }
+@media (prefers-reduced-motion: reduce) {
+    .brand-marquee { -webkit-mask-image: none; mask-image: none; }
+    .brand-marquee__track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; gap: 1rem 0; }
+    .brand-marquee__item[aria-hidden="true"] { display: none; }
 }

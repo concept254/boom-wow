@@ -75,7 +75,7 @@ SSH/Terminal (cPanel → **Terminal**):
 ```bash
 cd /home/ACCOUNT/boom-wow
 php artisan migrate --force
-php artisan db:seed --force          # roles, five businesses, content, admin user
+php artisan db:seed --force          # roles, the businesses, content, admin user
 php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 The admin password is printed once if `ADMIN_PASSWORD` was empty – save it. If `php` is the wrong version use the full path, e.g. `/opt/cpanel/ea-php83/root/usr/bin/php`. After changing `.env` later run `php artisan config:clear`.

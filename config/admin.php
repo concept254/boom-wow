@@ -14,11 +14,12 @@ $biz = ['name' => 'business_unit_id', 'type' => 'business', 'label' => 'Business
 return [
     'business-units' => [
         'model' => App\Models\BusinessUnit::class, 'label' => 'Business Units', 'permission' => 'businesses', 'scoped' => false, 'super_only_write' => true,
-        'search' => ['name', 'slug'], 'columns' => ['name' => 'Name', 'type' => 'Type', 'status' => 'Status'],
+        'search' => ['name', 'slug'], 'columns' => ['name' => 'Name', 'type' => 'Category', 'status' => 'Status'],
         'fields' => [
             ['name' => 'name', 'type' => 'text', 'label' => 'Name', 'rules' => 'required|string|max:150'],
-            ['name' => 'slug', 'type' => 'text', 'label' => 'URL slug', 'rules' => 'required|alpha_dash|max:100|unique:business_units,slug,{id}'],
-            ['name' => 'type', 'type' => 'select', 'label' => 'Type', 'options' => ['salon' => 'Salon', 'liquor' => 'Liquor store', 'it' => 'IT consultants', 'property' => 'Property management', 'events' => 'Events management', 'general' => 'General'], 'rules' => 'required|in:salon,liquor,it,property,events,general'],
+            ['name' => 'slug', 'type' => 'text', 'label' => 'URL slug (leave blank to build it from the name)', 'rules' => 'nullable|alpha_dash|max:100|unique:business_units,slug,{id}'],
+            ['name' => 'type', 'type' => 'text', 'label' => 'Category label (e.g. Clothing store) - shown on the website', 'rules' => 'nullable|string|max:60'],
+            ['name' => 'enquiry_type', 'type' => 'select', 'label' => 'Enquiry form style', 'options' => ['general' => 'General enquiry', 'project' => 'Project / quote request', 'viewing' => 'Viewing request', 'event' => 'Event enquiry', 'support' => 'Support request'], 'rules' => 'required|in:general,project,viewing,event,support'],
             ['name' => 'tagline', 'type' => 'text', 'label' => 'Tagline', 'rules' => 'nullable|max:200'],
             ['name' => 'description', 'type' => 'textarea', 'label' => 'Description', 'rules' => 'nullable|max:5000'],
             ['name' => 'logo_path', 'type' => 'image', 'label' => 'Logo', 'rules' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'],
@@ -199,6 +200,32 @@ return [
             ['name' => 'sort_order', 'type' => 'number', 'label' => 'Order (small first)', 'rules' => 'nullable|integer|min:0'],
             ['name' => 'starts_on', 'type' => 'date', 'label' => 'Show from (optional)', 'rules' => 'nullable|date'],
             ['name' => 'ends_on', 'type' => 'date', 'label' => 'Show until (optional)', 'rules' => 'nullable|date'],
+            ['name' => 'status', 'type' => 'select', 'label' => 'Status', 'options' => $status, 'rules' => 'required|in:draft,published,archived'],
+        ],
+    ],
+    'page-headers' => [
+        'model' => App\Models\PageHeader::class, 'label' => 'Page Headers', 'permission' => 'cms', 'scoped' => false, 'search' => ['key', 'title'],
+        'columns' => ['key' => 'Page', 'title' => 'Title', 'subtitle' => 'Sub title', 'is_active' => 'Active'],
+        'fields' => [
+            ['name' => 'key', 'type' => 'select', 'label' => 'Page', 'options' => App\Models\PageHeader::KEYS, 'rules' => 'required|in:'.implode(',', array_keys(App\Models\PageHeader::KEYS)).'|unique:page_headers,key,{id}'],
+            ['name' => 'title', 'type' => 'text', 'label' => 'Title (blank = the normal page title)', 'rules' => 'nullable|max:150'],
+            ['name' => 'subtitle', 'type' => 'text', 'label' => 'Sub title (optional)', 'rules' => 'nullable|max:300'],
+            ['name' => 'image_path', 'type' => 'image', 'label' => 'Background image (optional, wide, 1920x600 or larger)', 'rules' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'],
+            ['name' => 'image_url', 'type' => 'text', 'label' => 'or external image URL (optional)', 'rules' => 'nullable|url|max:500'],
+            ['name' => 'use_fallback', 'type' => 'checkbox', 'label' => 'When no image is set, use the site-wide default / online fallback image (untick for a plain dark banner)', 'rules' => 'boolean'],
+            ['name' => 'is_active', 'type' => 'checkbox', 'label' => 'Active', 'rules' => 'boolean'],
+        ],
+    ],
+    'brands' => [
+        'model' => App\Models\Brand::class, 'label' => 'Brands (logo carousel)', 'permission' => 'cms', 'scoped' => false, 'search' => ['name'],
+        'columns' => ['name' => 'Brand', 'sort_order' => 'Order', 'show_on_home' => 'On home page', 'status' => 'Status'],
+        'fields' => [
+            ['name' => 'name', 'type' => 'text', 'label' => 'Brand name', 'rules' => 'required|max:120'],
+            ['name' => 'logo_path', 'type' => 'image', 'label' => 'Logo (transparent PNG or WebP works best; optional - the name is shown without it)', 'rules' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'],
+            ['name' => 'business_unit_id', 'type' => 'select', 'label' => 'Sold by (optional)', 'model' => App\Models\BusinessUnit::class, 'label_column' => 'name', 'rules' => 'nullable|exists:business_units,id'],
+            ['name' => 'website_url', 'type' => 'text', 'label' => 'Website (optional)', 'rules' => 'nullable|url|max:255'],
+            ['name' => 'show_on_home', 'type' => 'checkbox', 'label' => 'Show on the home page and About page', 'rules' => 'boolean'],
+            ['name' => 'sort_order', 'type' => 'number', 'label' => 'Order (small first)', 'rules' => 'nullable|integer|min:0'],
             ['name' => 'status', 'type' => 'select', 'label' => 'Status', 'options' => $status, 'rules' => 'required|in:draft,published,archived'],
         ],
     ],

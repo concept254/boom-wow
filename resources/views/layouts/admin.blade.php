@@ -31,6 +31,8 @@
         ['Hero Slides', route('admin.resource.index', 'hero-slides'), 'cms.view'],
         ['Promotions & Adverts', route('admin.resource.index', 'promotions'), 'cms.view'],
         ['Team & Management', route('admin.resource.index', 'team-members'), 'cms.view'],
+        ['Brands (logo carousel)', route('admin.resource.index', 'brands'), 'cms.view'],
+        ['Page Headers', route('admin.resource.index', 'page-headers'), 'cms.view'],
         ['Subscribers', route('admin.resource.index', 'subscribers'), 'cms.view'],
         ['FAQs', route('admin.resource.index', 'faqs'), 'cms.view'],
         ['Navigation & Footer', route('admin.resource.index', 'menus'), 'cms.view'],
@@ -52,7 +54,7 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-    <link href="https://fonts.bunny.net/css?family=nunito:400,600,700,800|fredoka:400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=sora:400,600,700|dm-sans:400,500,600,700" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-brand-offwhite" x-data="{ nav: false }">

@@ -27,7 +27,7 @@ php artisan serve
 
 ## 3. First-run verification checklist (never executed yet)
 1. `composer install` – if Laravel 13 / `spatie/laravel-permission` constraint fails, check Packagist for the release that supports Laravel 13 and edit `composer.json` (`"spatie/laravel-permission": "^6.0 || ^7.0"` is a guess).
-2. `php artisan migrate:fresh --seed` – should create all tables and seed five businesses.
+2. `php artisan migrate:fresh --seed` – should create all tables and seed the six businesses.
 3. `npm install && npm run build` – if `laravel-vite-plugin`/`vite`/Tailwind 4 versions conflict, align them with the versions a fresh Laravel 13 skeleton ships (`composer create-project laravel/laravel` in a scratch folder and compare `package.json`, `vite.config.js`, `resources/css/app.css`).
 4. `php artisan test` – run all; fix failures. Tests use SQLite in memory (`phpunit.xml`).
 5. Click through: `/`, `/businesses/salon`, register → verify (see mail in `storage/logs/laravel.log`) → book → cart → checkout, then `/admin`.
@@ -46,7 +46,7 @@ npm run build               # or keep `npm run dev` running
 * Colours only via brand tokens (`bg-brand-orange`, `text-brand-charcoal`…) defined in `resources/css/app.css`. Do not hardcode hex in views.
 * Business-owned model ⇒ `use BelongsToBusiness`, `business_unit_id` column, add to `config/admin.php`.
 * Stock changes only through `InventoryService`; booking creation only through `BookingService`; orders only through `OrderService`.
-* Fonts: Fredoka (headings) + Nunito (body), set in `resources/css/app.css` (`--font-display`, `--font-sans`) and loaded from fonts.bunny.net in both layouts.
+* Fonts: Sora (headings) + DM Sans (body), set in `resources/css/app.css` (`--font-display`, `--font-sans`) and loaded from fonts.bunny.net in both layouts.
 * Blade gotcha: never use Alpine's `@error=`/`@can=`/`@auth=` shorthand in views - Blade treats them as directives. Use `x-on:error=` etc.
 * Tailwind 4 gotcha: a class reused with `@apply` must be declared with `@utility` (see `btn`).
 * New permission: add to `RolesAndPermissionsSeeder::MATRIX`, re-run `php artisan db:seed --class=RolesAndPermissionsSeeder`.

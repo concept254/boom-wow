@@ -51,7 +51,7 @@ class PublicController extends Controller
             'slides' => $slides,
             'about' => $about,
             'aboutExcerpt' => Str::limit(trim(preg_split('/\n\s*\n/', (string) ($about->content ?? ''))[0] ?? ''), 380)
-                ?: 'Boom & Wow Holdings brings together a salon, liquor store, IT consultants, property management and events management - all served by one team and one customer account.',
+                ?: 'Boom & Wow Holdings brings together '.\Illuminate\Support\Arr::join($businesses->pluck('name')->map(fn ($n) => Str::lower($n))->all(), ', ', ' and ').' - all served by one team and one customer account.',
             'businesses' => $businesses,
             'stores' => $businesses->where('is_featured', true)->values(),
             'stats' => [

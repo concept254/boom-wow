@@ -26,8 +26,8 @@
 <section class="mt-6" x-data="{ scroll(d) { const t = $refs.track; t.scrollBy({ left: d * t.clientWidth * 0.8, behavior: 'smooth' }); } }">
     <div class="section">
         <div class="flex items-end justify-between gap-4">
-            <div><p class="eyebrow">Our stores</p><h2 class="mt-2 text-3xl sm:text-4xl">Five businesses. Endless choice.</h2>
-                <p class="mt-2 max-w-2xl text-brand-graphite">From salon pampering and wine to IT, property and events - find the right store under one roof.</p></div>
+            <div><p class="eyebrow">Our stores</p><h2 class="mt-2 text-3xl sm:text-4xl">{{ \App\Support\Words::number($businesses->count()) }} {{ \Illuminate\Support\Str::plural('business', $businesses->count()) }}. Endless choice.</h2>
+                <p class="mt-2 max-w-2xl text-brand-graphite">Beauty, fashion, wine, IT, property and events - find the right store under one roof.</p></div>
             <div class="hidden gap-2 sm:flex">
                 <button type="button" @click="scroll(-1)" class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-offwhite text-xl hover:bg-brand-orange hover:text-brand-white" aria-label="Previous stores">&#8249;</button>
                 <button type="button" @click="scroll(1)" class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-offwhite text-xl hover:bg-brand-orange hover:text-brand-white" aria-label="Next stores">&#8250;</button>
@@ -42,10 +42,10 @@
                         @if ($open !== null)<span class="badge absolute left-3 top-3 {{ $open ? 'bg-green-600 text-brand-white' : 'bg-brand-charcoal text-brand-white' }}">{{ $open ? 'Open now' : 'Closed now' }}</span>@endif
                     </div>
                     <div class="p-5">
-                        <div class="-mt-12 mb-2 flex h-14 z-10 absolute w-14 items-center justify-center overflow-hidden rounded-2xl bg-brand-white shadow ring-1 ring-black/5">
+                        <div class="-mt-12 mb-2 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-brand-white shadow ring-1 ring-black/5">
                             @if ($b->logo_url)<img src="{{ $b->logo_url }}" alt="" class="h-full w-full object-contain p-1">@else<span class="font-display text-xl font-bold text-brand-orange">{{ mb_substr($b->name, 0, 1) }}</span>@endif
                         </div>
-                        <h3 class="text-xl mt-4"><a href="{{ route('business', $b) }}" class="after:absolute after:inset-0 hover:text-brand-orange">{{ $b->name }}</a></h3>
+                        <h3 class="text-xl"><a href="{{ route('business', $b) }}" class="after:absolute after:inset-0 hover:text-brand-orange">{{ $b->name }}</a></h3>
                         <p class="mt-1 line-clamp-2 min-h-[2.5rem] text-sm text-brand-graphite">{{ $b->tagline }}</p>
                         @php($h = $b->todayHours())
                         <p class="mt-3 text-xs font-bold text-brand-graphite">Today: {{ $h ? ($h->is_closed ? 'Closed' : substr($h->opens_at, 0, 5).' - '.substr($h->closes_at, 0, 5)) : 'See store page' }}</p>
@@ -129,6 +129,9 @@
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">@foreach ($products as $p)@include('public.partials.product-card', ['product' => $p])@endforeach</div>
 </div></section>
 @endif
+
+{{-- 5b. Brands we stock (Admin > Brands) --}}
+@include('public.partials.brands-carousel')
 
 {{-- 6. Subscription --}}
 <section id="subscribe" class="bg-brand-orange text-brand-white"><div class="section !py-12">

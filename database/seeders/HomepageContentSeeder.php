@@ -61,7 +61,7 @@ class HomepageContentSeeder extends Seeder
         // Sample people are fictional placeholders - replace in Admin > Team & Management.
         foreach ([
             ['Thandi Mokoena', 'Chief Executive Officer', 'management', 'Leads the group strategy and keeps every business focused on great service.', 1],
-            ['Pieter van der Merwe', 'Chief Operating Officer', 'management', 'Oversees day-to-day operations across all five businesses.', 2],
+            ['Pieter van der Merwe', 'Chief Operating Officer', 'management', 'Oversees day-to-day operations across all of our businesses.', 2],
             ['Naledi Khumalo', 'Head of Finance', 'management', 'Looks after budgets, reporting and compliance.', 3],
             ['Sipho Dlamini', 'Head of Customer Experience', 'management', 'Makes sure every customer feels looked after.', 4],
             ['Lerato Nkosi', 'Senior Stylist', 'team', 'Colour specialist with ten years of salon experience.', 1],

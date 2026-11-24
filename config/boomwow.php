@@ -19,6 +19,12 @@ return [
         'cache_seconds' => (int) env('HERO_CACHE_SECONDS', 3600),
     ],
 
+    'page_header' => [
+        // Used behind page banners that have no image. {seed} becomes the page key so each page gets a stable picture.
+        // Set PAGE_HEADER_FALLBACK_URL= (empty) in .env for plain dark banners instead.
+        'fallback_url' => env('PAGE_HEADER_FALLBACK_URL', 'https://picsum.photos/seed/bw-{seed}/1920/600'),
+    ],
+
     'logo' => [
         'light' => 'images/logo.svg',        // vector logo (transparent) for light backgrounds
         'dark' => 'images/logo-dark.svg',    // vector logo for dark surfaces (header, footer)

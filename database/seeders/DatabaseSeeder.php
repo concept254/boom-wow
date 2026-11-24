@@ -12,7 +12,9 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             AdminUserSeeder::class,
             BusinessSeeder::class,
+            ClothingBusinessSeeder::class,
             ContentSeeder::class,
+            SiteContentSeeder::class,
         ]);
 
         // Sample customers, bookings, orders, hero slides, adverts and team members. Turn off in production.

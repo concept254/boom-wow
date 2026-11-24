@@ -1,6 +1,7 @@
 @extends('layouts.app', ['title' => 'Your cart'])
 @section('content')
-<section class="section"><h1 class="text-4xl font-bold">Your cart</h1>
+<x-page-header slug="cart" title="Your cart" subtitle="Review your items before checkout." />
+<section class="section">
 @if ($lines->isEmpty())<p class="mt-6">Your cart is empty. <a class="text-brand-orange" href="{{ route('products') }}">Browse products</a></p>
 @else
 <div class="mt-8 divide-y divide-gray-200 rounded-lg ring-1 ring-black/5">@foreach ($lines as $l)

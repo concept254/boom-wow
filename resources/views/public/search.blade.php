@@ -1,6 +1,7 @@
 @extends('layouts.app', ['title' => 'Search'])
 @section('content')
-<section class="section"><h1 class="text-4xl font-bold">Search</h1>
+<x-page-header slug="search" title="Search" subtitle="Find businesses, services, products, events and properties." />
+<section class="section">
 <form class="mt-6 flex max-w-xl gap-3" method="GET" role="search"><input class="input" type="search" name="q" value="{{ $term }}" minlength="2" required aria-label="Search"><button class="btn-primary">Search</button></form>
 @if (strlen($term) < 2)<p class="mt-8 text-brand-graphite">Enter at least two characters.</p>
 @elseif (collect($results)->flatten()->isEmpty())<p class="mt-8">No results for “{{ $term }}”.</p>

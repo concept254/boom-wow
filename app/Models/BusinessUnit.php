@@ -14,7 +14,7 @@ class BusinessUnit extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name', 'slug', 'type', 'tagline', 'description', 'logo_path', 'cover_path', 'email', 'phone',
+        'name', 'slug', 'type', 'enquiry_type', 'tagline', 'description', 'logo_path', 'cover_path', 'email', 'phone',
         'address', 'city', 'latitude', 'longitude', 'social_links', 'accepts_bookings', 'sells_products',
         'age_restricted', 'is_featured', 'status', 'sort_order', 'meta_title', 'meta_description',
     ];
@@ -28,6 +28,41 @@ class BusinessUnit extends Model
             'age_restricted' => 'boolean',
             'is_featured' => 'boolean',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        // Adding a business should need nothing but a name: build the slug and sensible opening hours for it.
+        static::saving(function (self $b) {
+            if (blank($b->slug)) {
+                $base = \Illuminate\Support\Str::slug((string) $b->name) ?: 'business';
+                $slug = $base;
+                for ($i = 2; static::withTrashed()->where('slug', $slug)->where('id', '!=', (int) $b->id)->exists(); $i++) {
+                    $slug = $base.'-'.$i;
+                }
+                $b->slug = $slug;
+            }
+        });
+        static::created(function (self $b) {
+            foreach (range(0, 6) as $dow) {
+                BusinessHour::firstOrCreate(['business_unit_id' => $b->id, 'day_of_week' => $dow], match (true) {
+                    $dow === 0 => ['is_closed' => true],
+                    $dow === 6 => ['is_closed' => false, 'opens_at' => '09:00', 'closes_at' => '14:00'],
+                    default => ['is_closed' => false, 'opens_at' => '08:30', 'closes_at' => '17:30'],
+                });
+            }
+        });
+    }
+
+    /** Free-text category label; the column is NOT NULL so an empty form value becomes "general". */
+    public function setTypeAttribute($value): void
+    {
+        $this->attributes['type'] = filled($value) ? $value : 'general';
+    }
+
+    public function getEnquiryKindAttribute(): string
+    {
+        return $this->enquiry_type ?: 'general';
     }
 
     public function getRouteKeyName(): string

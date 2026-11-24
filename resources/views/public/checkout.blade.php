@@ -1,6 +1,7 @@
 @extends('layouts.app', ['title' => 'Checkout'])
 @section('content')
-<section class="section max-w-3xl"><h1 class="text-4xl font-bold">Checkout</h1>
+<x-page-header slug="checkout" title="Checkout" subtitle="Almost there - confirm your details and place your order." />
+<section class="section max-w-3xl">
 @error('cart')<div class="mt-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700" role="alert">{{ $message }}</div>@enderror
 <ul class="mt-6 divide-y divide-gray-200 rounded-lg ring-1 ring-black/5">@foreach ($lines as $l)<li class="flex justify-between p-4 text-sm"><span>{{ $l['quantity'] }} × {{ $l['product']->name }} <span class="text-brand-orange">({{ $l['product']->business->name }})</span></span><span>R{{ number_format($l['line_total'], 2) }}</span></li>@endforeach<li class="flex justify-between bg-brand-offwhite p-4 font-bold"><span>Total</span><span>R{{ number_format($total, 2) }}</span></li></ul>
 <form method="POST" action="{{ route('checkout.place') }}" class="mt-8 space-y-5" x-data="{ f: '{{ old('fulfilment', 'collection') }}' }">@csrf
