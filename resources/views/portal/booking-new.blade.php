@@ -24,7 +24,7 @@
             <div class="flex flex-wrap gap-2" role="radiogroup" aria-label="Available times"><template x-for="s in slots" :key="s"><label class="cursor-pointer"><input type="radio" name="time" :value="s" x-model="time" class="peer sr-only" required><span class="block rounded border border-gray-300 px-3 py-1.5 text-sm peer-checked:border-brand-orange peer-checked:bg-brand-orange peer-checked:text-brand-white peer-focus-visible:ring-2 peer-focus-visible:ring-brand-orange" x-text="s"></span></label></template></div>
             @error('time')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
         <div x-show="time" x-cloak><label class="label" for="nt">Notes (optional)</label><textarea id="nt" name="notes" rows="3" maxlength="1000" class="input">{{ old('notes') }}</textarea></div>
-        <button class="btn-primary" :disabled="!time" :class="{ 'opacity-50': !time }">Confirm booking</button>
+        <button class="btn-primary" :disabled="!time" :class="{ 'opacity-50': !time }"><x-icon name="check-circle" class="h-4 w-4" />Confirm booking</button>
     </form>
 </section>
 @endsection

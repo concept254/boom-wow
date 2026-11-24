@@ -11,5 +11,5 @@
     </div>
     <div><label class="label" for="phone-{{ $type }}">Phone (optional)</label><input id="phone-{{ $type }}" class="input" name="phone" value="{{ old('phone', auth()->user()?->phone) }}"></div>
     <div><label class="label" for="msg-{{ $type }}">Message</label><textarea id="msg-{{ $type }}" class="input" rows="4" name="message" required>{{ old('message') }}</textarea>@error('message')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
-    <button class="btn-primary">Send enquiry</button>
+    <button class="btn-primary"><x-icon name="send" class="h-4 w-4" />Send enquiry</button>
 </form>

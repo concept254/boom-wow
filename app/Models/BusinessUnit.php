@@ -60,6 +60,22 @@ class BusinessUnit extends Model
         $this->attributes['type'] = filled($value) ? $value : 'general';
     }
 
+    /** Icon for this business, picked from its name/category so new businesses get a sensible one automatically. */
+    public function getIconNameAttribute(): string
+    {
+        $t = \Illuminate\Support\Str::lower($this->name.' '.$this->type);
+
+        return match (true) {
+            (bool) preg_match('/salon|hair|beauty|barber|spa|nail/', $t) => 'scissors',
+            (bool) preg_match('/liquor|wine|bottle|spirit|bar\b/', $t) => 'wine',
+            (bool) preg_match('/cloth|fashion|apparel|wear|boutique/', $t) => 'shirt',
+            (bool) preg_match('/\bit\b|tech|computer|software|consult/', $t) => 'laptop',
+            (bool) preg_match('/propert|real estate|rental/', $t) => 'building',
+            (bool) preg_match('/event|catering|wedding/', $t) => 'ticket',
+            default => 'store',
+        };
+    }
+
     public function getEnquiryKindAttribute(): string
     {
         return $this->enquiry_type ?: 'general';

@@ -4,7 +4,7 @@
     <div><label class="label" for="q">Reference</label><input id="q" name="q" value="{{ request('q') }}" class="input"></div>
     <div><label class="label" for="status">Status</label><select id="status" name="status" class="input"><option value="">All</option>@foreach (\App\Models\Booking::STATUSES as $s)<option value="{{ $s }}" @selected(request('status') === $s)>{{ ucfirst(str_replace('_', ' ', $s)) }}</option>@endforeach</select></div>
     <div><label class="label" for="date">Date</label><input id="date" type="date" name="date" value="{{ request('date') }}" class="input"></div>
-    <button class="btn-dark">Filter</button>
+    <button class="btn-dark"><x-icon name="search" class="h-4 w-4" />Filter</button>
 </form>
 <div class="overflow-x-auto rounded-lg bg-brand-white shadow-sm ring-1 ring-black/5">
 <table class="min-w-full text-sm"><thead class="bg-brand-charcoal text-left text-xs uppercase text-brand-white"><tr><th class="px-4 py-3">Ref</th><th class="px-4 py-3">When</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Service</th><th class="px-4 py-3">Business</th><th class="px-4 py-3">Staff</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Update</th></tr></thead>

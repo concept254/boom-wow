@@ -5,5 +5,5 @@
 <div><label class="label" for="email">Email</label><input id="email" type="email" name="email" class="input" required value="{{ old('email', $email) }}">@error('email')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
 <div><label class="label" for="password">New password</label><input id="password" type="password" name="password" class="input" required>@error('password')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
 <div><label class="label" for="pc">Confirm password</label><input id="pc" type="password" name="password_confirmation" class="input" required></div>
-<button class="btn-primary w-full">Reset password</button></form></div></section>
+<button class="btn-primary w-full"><x-icon name="key" class="h-4 w-4" />Reset password</button></form></div></section>
 @endsection

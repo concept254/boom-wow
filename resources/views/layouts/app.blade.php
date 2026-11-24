@@ -16,7 +16,7 @@
     <x-top-bar />
     @include('partials.header')
     @if (session('status'))
-        <div class="bg-brand-offwhite"><div class="mx-auto max-w-7xl px-4 py-3 text-sm text-brand-charcoal sm:px-6 lg:px-8" role="status">{{ session('status') }}</div></div>
+        <div class="bg-brand-offwhite"><div class="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm text-brand-charcoal sm:px-6 lg:px-8" role="status"><x-icon name="check-circle" class="h-5 w-5 text-brand-orange" />{{ session('status') }}</div></div>
     @endif
     <main>@yield('content')</main>
     @include('partials.footer')
@@ -24,7 +24,7 @@
     @if ($wa)
         <a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"
            class="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-brand-white shadow-lg transition hover:scale-105 hover:bg-green-600">
-            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9.5L5 21v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
+            <x-icon name="whatsapp" class="h-7 w-7" />
         </a>
     @endif
 </body>

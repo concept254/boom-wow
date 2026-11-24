@@ -11,5 +11,5 @@
 <div><label class="label" for="nt">Notes</label><textarea id="nt" class="input" name="notes" rows="3">{{ old('notes') }}</textarea></div>
 @if ($ageRestricted)<div class="rounded border border-brand-orange bg-brand-offwhite p-4 text-sm"><p>{{ \App\Services\SettingsService::get('liquor_notice') }}</p><label class="mt-3 flex items-start gap-2"><input type="checkbox" name="age_confirmed" value="1" class="mt-1"> <span>I confirm that I am {{ config('boomwow.liquor.min_age') }} years or older and will show valid ID on collection/delivery.</span></label></div>@endif
 <p class="text-sm text-brand-graphite">Payment: {{ str_replace('_', ' ', config('boomwow.payment.driver')) }}. You will receive payment instructions after placing your order.</p>
-<button class="btn-primary">Place order</button></form></section>
+<button class="btn-primary"><x-icon name="check-circle" class="h-4 w-4" />Place order</button></form></section>
 @endsection

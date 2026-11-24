@@ -7,29 +7,29 @@
             @foreach ($menu as $item)
                 <a href="{{ $item->url }}" class="transition-colors hover:text-brand-orange">{{ $item->label }}</a>
             @endforeach
-            <a href="{{ route('cart') }}" class="transition-colors hover:text-brand-orange">Cart ({{ app(\App\Services\CartService::class)->count() }})</a>
+            <a href="{{ route('cart') }}" class="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"><x-icon name="cart" class="h-5 w-5" />Cart ({{ app(\App\Services\CartService::class)->count() }})</a>
             @auth
-                <a href="{{ auth()->user()->isBackOffice() ? route('admin.dashboard') : route('portal.dashboard') }}" class="btn-primary">{{ auth()->user()->isBackOffice() ? 'Admin' : 'Customer Portal' }}</a>
-                <form method="POST" action="{{ route('logout') }}">@csrf<button class="hover:text-brand-orange">Logout</button></form>
+                <a href="{{ auth()->user()->isBackOffice() ? route('admin.dashboard') : route('portal.dashboard') }}" class="btn-primary"><x-icon name="user" class="h-4 w-4" />{{ auth()->user()->isBackOffice() ? 'Admin' : 'Customer Portal' }}</a>
+                <form method="POST" action="{{ route('logout') }}">@csrf<button class="inline-flex items-center gap-1.5 hover:text-brand-orange"><x-icon name="log-out" class="h-4 w-4" />Logout</button></form>
             @else
-                <a href="{{ route('login') }}" class="hover:text-brand-orange">Login</a>
-                <a href="{{ route('register') }}" class="btn-primary">Register</a>
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-1.5 hover:text-brand-orange"><x-icon name="log-in" class="h-4 w-4" />Login</a>
+                <a href="{{ route('register') }}" class="btn-primary"><x-icon name="user-plus" class="h-4 w-4" />Register</a>
             @endauth
         </nav>
 
         <button class="lg:hidden" @click="open = !open" :aria-expanded="open" aria-label="Toggle menu">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <x-icon name="menu" class="h-6 w-6" x-show="! open" /><x-icon name="x" class="h-6 w-6" x-cloak x-show="open" />
         </button>
     </div>
     <nav x-cloak x-show="open" x-transition class="border-t border-brand-graphite px-4 pb-4 lg:hidden" aria-label="Mobile">
         <div class="flex flex-col gap-3 pt-3 text-sm">
             @foreach ($menu as $item)<a href="{{ $item->url }}">{{ $item->label }}</a>@endforeach
-            <a href="{{ route('cart') }}">Cart</a>
+            <a href="{{ route('cart') }}" class="flex items-center gap-2"><x-icon name="cart" class="h-4 w-4" />Cart</a>
             @auth
                 <a href="{{ auth()->user()->isBackOffice() ? route('admin.dashboard') : route('portal.dashboard') }}">{{ auth()->user()->isBackOffice() ? 'Admin' : 'Customer Portal' }}</a>
-                <form method="POST" action="{{ route('logout') }}">@csrf<button>Logout</button></form>
+                <form method="POST" action="{{ route('logout') }}">@csrf<button class="flex items-center gap-2"><x-icon name="log-out" class="h-4 w-4" />Logout</button></form>
             @else
-                <a href="{{ route('login') }}">Login</a><a href="{{ route('register') }}">Register</a>
+                <a href="{{ route('login') }}" class="flex items-center gap-2"><x-icon name="log-in" class="h-4 w-4" />Login</a><a href="{{ route('register') }}" class="flex items-center gap-2"><x-icon name="user-plus" class="h-4 w-4" />Register</a>
             @endauth
         </div>
     </nav>

@@ -10,9 +10,9 @@
             <span class="font-semibold">R{{ number_format($product->current_price, 2) }}</span>
         </p>
         @if ($product->in_stock)
-            <form method="POST" action="{{ route('cart.add', $product) }}" class="mt-auto pt-4">@csrf<button class="btn-primary w-full">Add to cart</button></form>
+            <form method="POST" action="{{ route('cart.add', $product) }}" class="mt-auto pt-4">@csrf<button class="btn-primary w-full"><x-icon name="cart" class="h-4 w-4" />Add to cart</button></form>
         @else
-            <p class="mt-auto pt-4 text-sm text-gray-500">Out of stock</p>
+            <p class="mt-auto flex items-center gap-1.5 pt-4 text-sm text-gray-500"><x-icon name="alert" class="h-4 w-4" />Out of stock</p>
         @endif
     </div>
 </div>

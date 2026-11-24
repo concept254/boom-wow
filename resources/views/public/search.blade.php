@@ -2,7 +2,7 @@
 @section('content')
 <x-page-header slug="search" title="Search" subtitle="Find businesses, services, products, events and properties." />
 <section class="section">
-<form class="mt-6 flex max-w-xl gap-3" method="GET" role="search"><input class="input" type="search" name="q" value="{{ $term }}" minlength="2" required aria-label="Search"><button class="btn-primary">Search</button></form>
+<form class="mt-6 flex max-w-xl gap-3" method="GET" role="search"><input class="input" type="search" name="q" value="{{ $term }}" minlength="2" required aria-label="Search"><button class="btn-primary"><x-icon name="search" class="h-4 w-4" />Search</button></form>
 @if (strlen($term) < 2)<p class="mt-8 text-brand-graphite">Enter at least two characters.</p>
 @elseif (collect($results)->flatten()->isEmpty())<p class="mt-8">No results for “{{ $term }}”.</p>
 @else

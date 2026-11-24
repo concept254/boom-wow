@@ -14,6 +14,6 @@
     <hr><p class="text-sm text-brand-graphite">Change password (leave blank to keep the current one)</p>
     <div class="grid gap-4 sm:grid-cols-2"><div><label class="label" for="password">New password</label><input id="password" type="password" name="password" class="input" autocomplete="new-password"></div><div><label class="label" for="password_confirmation">Confirm</label><input id="password_confirmation" type="password" name="password_confirmation" class="input" autocomplete="new-password"></div></div>
     @if ($errors->any())<ul class="list-disc pl-5 text-sm text-red-600">@foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>@endif
-    <button class="btn-primary">Save changes</button>
+    <button class="btn-primary"><x-icon name="check" class="h-4 w-4" />Save changes</button>
 </form></section>
 @endsection

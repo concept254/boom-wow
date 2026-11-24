@@ -68,3 +68,16 @@ Drop `.jpg/.jpeg/.png/.webp` into `public/images/hero/` (or upload via Admin →
 
 ## 10. Testing
 `php artisan test` (or `composer test`). Feature tests cover authentication, registration, roles, business management, isolation, services/products, stock, orders, booking availability/double-booking, enquiries, CMS, super-admin access.
+
+
+## Icons
+Icons are inline SVGs (no icon font, no extra requests, no dependencies - safe for shared hosting). Use the component anywhere in Blade:
+
+```blade
+<x-icon name="phone" class="h-5 w-5 text-brand-orange" />
+```
+
+* The icon set lives in `config/icons.php` (name => SVG markup, 24x24 outline style). To add one, add an entry there; it inherits size and colour from the CSS classes you pass.
+* An unknown name renders a neutral circle instead of failing, so a typo never breaks a page.
+* Businesses get an icon automatically from their name/category (`BusinessUnit::icon_name`: scissors, wine, shirt, laptop, building, ticket, or store).
+* The admin sidebar is defined at the top of `resources/views/layouts/admin.blade.php` as `[label, url, permission, icon, group]` rows; add a row to add a menu item.

@@ -29,8 +29,8 @@
             <div><p class="eyebrow">Our stores</p><h2 class="mt-2 text-3xl sm:text-4xl">{{ \App\Support\Words::number($businesses->count()) }} {{ \Illuminate\Support\Str::plural('business', $businesses->count()) }}. Endless choice.</h2>
                 <p class="mt-2 max-w-2xl text-brand-graphite">Beauty, fashion, wine, IT, property and events - find the right store under one roof.</p></div>
             <div class="hidden gap-2 sm:flex">
-                <button type="button" @click="scroll(-1)" class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-offwhite text-xl hover:bg-brand-orange hover:text-brand-white" aria-label="Previous stores">&#8249;</button>
-                <button type="button" @click="scroll(1)" class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-offwhite text-xl hover:bg-brand-orange hover:text-brand-white" aria-label="Next stores">&#8250;</button>
+                <button type="button" @click="scroll(-1)" class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-offwhite text-xl hover:bg-brand-orange hover:text-brand-white" aria-label="Previous stores"><x-icon name="chevron-left" class="h-5 w-5" /></button>
+                <button type="button" @click="scroll(1)" class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-offwhite text-xl hover:bg-brand-orange hover:text-brand-white" aria-label="Next stores"><x-icon name="chevron-right" class="h-5 w-5" /></button>
             </div>
         </div>
         <div x-ref="track" class="no-scrollbar -mx-4 mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6" tabindex="0" aria-label="Featured stores">
@@ -43,22 +43,22 @@
                     </div>
                     <div class="p-5">
                         <div class="-mt-12 mb-2 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-brand-white shadow ring-1 ring-black/5">
-                            @if ($b->logo_url)<img src="{{ $b->logo_url }}" alt="" class="h-full w-full object-contain p-1">@else<span class="font-display text-xl font-bold text-brand-orange">{{ mb_substr($b->name, 0, 1) }}</span>@endif
+                            @if ($b->logo_url)<img src="{{ $b->logo_url }}" alt="" class="h-full w-full object-contain p-1">@else<x-icon :name="$b->icon_name" class="h-7 w-7 text-brand-orange" />@endif
                         </div>
                         <h3 class="text-xl"><a href="{{ route('business', $b) }}" class="after:absolute after:inset-0 hover:text-brand-orange">{{ $b->name }}</a></h3>
                         <p class="mt-1 line-clamp-2 min-h-[2.5rem] text-sm text-brand-graphite">{{ $b->tagline }}</p>
                         @php($h = $b->todayHours())
-                        <p class="mt-3 text-xs font-bold text-brand-graphite">Today: {{ $h ? ($h->is_closed ? 'Closed' : substr($h->opens_at, 0, 5).' - '.substr($h->closes_at, 0, 5)) : 'See store page' }}</p>
+                        <p class="mt-3 flex items-center gap-1.5 text-xs font-bold text-brand-graphite"><x-icon name="clock" class="h-3.5 w-3.5 text-brand-orange" />Today: {{ $h ? ($h->is_closed ? 'Closed' : substr($h->opens_at, 0, 5).' - '.substr($h->closes_at, 0, 5)) : 'See store page' }}</p>
                         <div class="relative z-10 mt-4 flex flex-wrap gap-2">
-                            <a href="{{ route('business', $b) }}" class="btn-primary !px-4 !py-2">Visit store</a>
-                            @if ($b->accepts_bookings)<a href="{{ route('portal.bookings.new', ['business' => $b->id]) }}" class="btn-outline !px-4 !py-2">Book</a>@endif
-                            @if ($b->sells_products)<a href="{{ route('products', ['business' => $b->slug]) }}" class="btn-outline !px-4 !py-2">Shop</a>@endif
+                            <a href="{{ route('business', $b) }}" class="btn-primary !px-4 !py-2">Visit store<x-icon name="arrow-right" class="h-4 w-4" /></a>
+                            @if ($b->accepts_bookings)<a href="{{ route('portal.bookings.new', ['business' => $b->id]) }}" class="btn-outline !px-4 !py-2"><x-icon name="calendar-check" class="h-4 w-4" />Book</a>@endif
+                            @if ($b->sells_products)<a href="{{ route('products', ['business' => $b->slug]) }}" class="btn-outline !px-4 !py-2"><x-icon name="bag" class="h-4 w-4" />Shop</a>@endif
                         </div>
                     </div>
                 </article>
             @endforeach
         </div>
-        <div class="mt-4 text-center"><a href="{{ route('businesses') }}" class="text-sm font-bold text-brand-orange hover:text-brand-orange-dark">See all businesses &rarr;</a></div>
+        <div class="mt-4 text-center"><a href="{{ route('businesses') }}" class="inline-flex items-center gap-1 text-sm font-bold text-brand-orange hover:text-brand-orange-dark">See all businesses<x-icon name="arrow-right" class="h-4 w-4" /></a></div>
     </div>
 </section>
 @endif
@@ -66,15 +66,15 @@
 {{-- 3. Featured services --}}
 @if ($services->isNotEmpty())
 <section class="bg-brand-offwhite"><div class="section">
-    <div class="flex items-end justify-between gap-4"><div><p class="eyebrow">Featured services</p><h2 class="mt-2 text-3xl sm:text-4xl">Book with us</h2></div><a href="{{ route('services') }}" class="text-sm font-bold text-brand-orange hover:text-brand-orange-dark">All services &rarr;</a></div>
+    <div class="flex items-end justify-between gap-4"><div><p class="eyebrow">Featured services</p><h2 class="mt-2 text-3xl sm:text-4xl">Book with us</h2></div><a href="{{ route('services') }}" class="inline-flex items-center gap-1 text-sm font-bold text-brand-orange hover:text-brand-orange-dark">All services<x-icon name="arrow-right" class="h-4 w-4" /></a></div>
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         @foreach ($services as $svc)
             <div class="card flex flex-col p-6">
-                <span class="chip self-start !bg-brand-white">{{ $svc->business->name }}</span>
+                <span class="chip self-start !bg-brand-white"><x-icon :name="$svc->business->icon_name" class="h-3.5 w-3.5 text-brand-orange" />{{ $svc->business->name }}</span>
                 <h3 class="mt-3 text-xl">{{ $svc->name }}</h3>
                 @if ($svc->summary ?? false)<p class="mt-1 line-clamp-2 text-sm text-brand-graphite">{{ $svc->summary }}</p>@endif
-                <p class="mt-3 text-sm font-bold text-brand-graphite"><span class="text-lg text-brand-orange">{{ $svc->price_label }} R{{ number_format($svc->price, 2) }}</span> &middot; {{ $svc->duration_minutes }} min</p>
-                <a href="{{ route('portal.bookings.new', ['service' => $svc->id]) }}" class="btn-primary mt-5 self-start">Book now</a>
+                <p class="mt-3 text-sm font-bold text-brand-graphite"><span class="text-lg text-brand-orange">{{ $svc->price_label }} R{{ number_format($svc->price, 2) }}</span> &middot; <span class="inline-flex items-center gap-1 align-middle"><x-icon name="clock" class="h-4 w-4" />{{ $svc->duration_minutes }} min</span></p>
+                <a href="{{ route('portal.bookings.new', ['service' => $svc->id]) }}" class="btn-primary mt-5 self-start"><x-icon name="calendar-check" class="h-4 w-4" />Book now</a>
             </div>
         @endforeach
     </div>
@@ -85,7 +85,7 @@
 <section class="bg-brand-charcoal text-brand-white"><div class="section">
     <div class="grid gap-6 lg:grid-cols-3">
         <div class="rounded-3xl bg-brand-graphite p-7">
-            <p class="eyebrow">At a glance</p><h2 class="mt-2 text-2xl !text-brand-white">Boom &amp; Wow in numbers</h2>
+            <span class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-orange/15 text-brand-orange"><x-icon name="chart" class="h-5 w-5" /></span><p class="eyebrow">At a glance</p><h2 class="mt-2 text-2xl !text-brand-white">Boom &amp; Wow in numbers</h2>
             <dl class="mt-6 grid grid-cols-2 gap-5">
                 @foreach ($stats as $label => $value)
                     <div><dd class="font-display text-4xl font-bold text-brand-orange">{{ $value }}</dd><dt class="text-sm text-gray-300">{{ $label }}</dt></div>
@@ -93,7 +93,7 @@
             </dl>
         </div>
         <div class="rounded-3xl bg-brand-graphite p-7">
-            <p class="eyebrow">Opening hours</p><h2 class="mt-2 text-2xl !text-brand-white">Open today</h2>
+            <span class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-orange/15 text-brand-orange"><x-icon name="clock" class="h-5 w-5" /></span><p class="eyebrow">Opening hours</p><h2 class="mt-2 text-2xl !text-brand-white">Open today</h2>
             <ul class="mt-5 space-y-3 text-sm">
                 @foreach ($businesses as $b)
                     @php($h = $b->todayHours())
@@ -106,14 +106,14 @@
             @if ($s('trading_note'))<p class="mt-4 text-xs text-gray-400">{{ $s('trading_note') }}</p>@endif
         </div>
         <div class="rounded-3xl bg-brand-orange p-7 text-brand-white">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-white/80">Find us</p><h2 class="mt-2 text-2xl !text-brand-white">Come say hello</h2>
+            <span class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-white/20"><x-icon name="map-pin" class="h-5 w-5" /></span><p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-white/80">Find us</p><h2 class="mt-2 text-2xl !text-brand-white">Come say hello</h2>
             <ul class="mt-5 space-y-2 text-sm font-semibold">
-                @if ($s('contact_address'))<li>{{ $s('contact_address') }}</li>@endif
-                @if ($s('contact_phone'))<li><a href="tel:{{ preg_replace('/[^+\d]/', '', $s('contact_phone')) }}" class="underline underline-offset-2">{{ $s('contact_phone') }}</a></li>@endif
-                @if ($s('contact_email'))<li><a href="mailto:{{ $s('contact_email') }}" class="underline underline-offset-2">{{ $s('contact_email') }}</a></li>@endif
+                @if ($s('contact_address'))<li class="flex items-start gap-2"><x-icon name="map-pin" class="mt-0.5 h-4 w-4" /><span>{{ $s('contact_address') }}</span></li>@endif
+                @if ($s('contact_phone'))<li class="flex items-center gap-2"><x-icon name="phone" class="h-4 w-4" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $s('contact_phone')) }}" class="underline underline-offset-2">{{ $s('contact_phone') }}</a></li>@endif
+                @if ($s('contact_email'))<li class="flex items-center gap-2"><x-icon name="mail" class="h-4 w-4" /><a href="mailto:{{ $s('contact_email') }}" class="underline underline-offset-2">{{ $s('contact_email') }}</a></li>@endif
             </ul>
-            <div class="mt-6 flex flex-wrap gap-3"><a href="{{ route('contact') }}" class="btn-light">Contact &amp; map</a>
-                @if ($s('whatsapp_number'))<a href="https://wa.me/{{ preg_replace('/\D/', '', $s('whatsapp_number')) }}" rel="noopener" class="btn-outline-light">WhatsApp us</a>@endif</div>
+            <div class="mt-6 flex flex-wrap gap-3"><a href="{{ route('contact') }}" class="btn-light"><x-icon name="map-pin" class="h-4 w-4" />Contact &amp; map</a>
+                @if ($s('whatsapp_number'))<a href="https://wa.me/{{ preg_replace('/\D/', '', $s('whatsapp_number')) }}" rel="noopener" class="btn-outline-light"><x-icon name="whatsapp" class="h-4 w-4" />WhatsApp us</a>@endif</div>
         </div>
     </div>
 </div></section>
@@ -125,7 +125,7 @@
 {{-- Featured products --}}
 @if ($products->isNotEmpty())
 <section class="bg-brand-offwhite"><div class="section">
-    <div class="flex items-end justify-between gap-4"><div><p class="eyebrow">Featured products</p><h2 class="mt-2 text-3xl sm:text-4xl">Shop favourites</h2></div><a href="{{ route('products') }}" class="text-sm font-bold text-brand-orange hover:text-brand-orange-dark">All products &rarr;</a></div>
+    <div class="flex items-end justify-between gap-4"><div><p class="eyebrow">Featured products</p><h2 class="mt-2 text-3xl sm:text-4xl">Shop favourites</h2></div><a href="{{ route('products') }}" class="inline-flex items-center gap-1 text-sm font-bold text-brand-orange hover:text-brand-orange-dark">All products<x-icon name="arrow-right" class="h-4 w-4" /></a></div>
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">@foreach ($products as $p)@include('public.partials.product-card', ['product' => $p])@endforeach</div>
 </div></section>
 @endif
@@ -150,10 +150,10 @@
             <p class="mt-4 text-brand-graphite">{{ $aboutExcerpt }}</p>
             <ul class="mt-5 grid gap-3 text-sm font-bold sm:grid-cols-3">
                 @foreach (['One account for every business', 'Quality you can trust', 'Clear pricing & availability'] as $point)
-                    <li class="rounded-2xl bg-brand-offwhite px-4 py-3"><span class="text-brand-orange">&#10003;</span> {{ $point }}</li>
+                    <li class="flex items-center gap-2 rounded-2xl bg-brand-offwhite px-4 py-3"><x-icon name="check-circle" class="h-5 w-5 text-brand-orange" />{{ $point }}</li>
                 @endforeach
             </ul>
-            <div class="mt-7 flex flex-wrap gap-3"><a href="{{ route('about') }}" class="btn-primary">Our story</a><a href="{{ route('contact') }}" class="btn-outline">Get in touch</a></div>
+            <div class="mt-7 flex flex-wrap gap-3"><a href="{{ route('about') }}" class="btn-primary">Our story<x-icon name="arrow-right" class="h-4 w-4" /></a><a href="{{ route('contact') }}" class="btn-outline"><x-icon name="mail" class="h-4 w-4" />Get in touch</a></div>
         </div>
         <div class="grid grid-cols-2 gap-4">
             @foreach ($businesses->take(4) as $k => $b)
@@ -168,7 +168,7 @@
 <section class="bg-brand-offwhite"><div class="section">
     <div class="grid gap-10 lg:grid-cols-[1fr_2fr]">
         <div><p class="eyebrow">FAQs</p><h2 class="mt-2 text-3xl sm:text-4xl">Quick answers</h2><p class="mt-3 text-brand-graphite">Can't find what you need? Our team is happy to help.</p>
-            <div class="mt-5 flex flex-wrap gap-3"><a href="{{ route('faqs') }}" class="btn-outline">All FAQs</a><a href="{{ route('contact') }}" class="btn-primary">Ask us</a></div></div>
+            <div class="mt-5 flex flex-wrap gap-3"><a href="{{ route('faqs') }}" class="btn-outline"><x-icon name="help" class="h-4 w-4" />All FAQs</a><a href="{{ route('contact') }}" class="btn-primary"><x-icon name="message" class="h-4 w-4" />Ask us</a></div></div>
         <div>@include('public.partials.faq-list', ['faqs' => $faqs])</div>
     </div>
 </div></section>
@@ -184,8 +184,8 @@
 
 {{-- Contact --}}
 <section class="bg-brand-offwhite"><div class="section grid gap-10 lg:grid-cols-2">
-    <div><p class="eyebrow">Contact</p><h2 class="mt-2 text-3xl sm:text-4xl">Let's talk</h2><p class="mt-4 text-brand-graphite">{{ $s('contact_address') }}<br>{{ $s('contact_phone') }}<br>{{ $s('contact_email') }}</p>
-        <a href="{{ route('contact') }}" class="btn-outline mt-6">Directions &amp; opening hours</a></div>
+    <div><p class="eyebrow">Contact</p><h2 class="mt-2 text-3xl sm:text-4xl">Let's talk</h2><ul class="mt-4 space-y-2 text-brand-graphite"><li class="flex items-start gap-2"><x-icon name="map-pin" class="mt-1 h-4 w-4 text-brand-orange" />{{ $s('contact_address') }}</li><li class="flex items-center gap-2"><x-icon name="phone" class="h-4 w-4 text-brand-orange" />{{ $s('contact_phone') }}</li><li class="flex items-center gap-2"><x-icon name="mail" class="h-4 w-4 text-brand-orange" />{{ $s('contact_email') }}</li></ul>
+        <a href="{{ route('contact') }}" class="btn-outline mt-6"><x-icon name="navigation" class="h-4 w-4" />Directions &amp; opening hours</a></div>
     @include('public.partials.enquiry-form', ['type' => 'general', 'business' => null])
 </div></section>
 @endsection

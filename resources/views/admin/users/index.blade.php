@@ -10,7 +10,7 @@
         <div><label class="label" for="password">Password (min 8, letters + numbers)</label><input id="password" type="password" name="password" class="input" required autocomplete="new-password"></div>
         <div><label class="label" for="role">Role</label><select id="role" name="role" class="input">@foreach ($roles as $r)<option>{{ $r }}</option>@endforeach</select></div>
         <fieldset class="sm:col-span-2"><legend class="label">Businesses (Business Manager / Staff)</legend><div class="flex flex-wrap gap-4">@foreach ($businesses as $b)<label class="flex items-center gap-2 text-sm"><input type="checkbox" name="businesses[]" value="{{ $b->id }}" class="rounded border-gray-300 text-brand-orange focus:ring-brand-orange"> {{ $b->name }}</label>@endforeach</div></fieldset>
-        <div class="sm:col-span-2"><button class="btn-primary">Create user</button></div>
+        <div class="sm:col-span-2"><button class="btn-primary"><x-icon name="user-plus" class="h-4 w-4" />Create user</button></div>
     </form>
 </details>
 <form method="GET" class="mb-4 flex items-end gap-2" role="search"><div><label class="label" for="q">Email</label><input id="q" name="q" value="{{ request('q') }}" class="input"></div><button class="btn-dark">Search</button></form>

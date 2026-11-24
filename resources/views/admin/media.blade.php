@@ -4,7 +4,7 @@
     <label class="label" for="files">Upload images (JPG, PNG, WEBP · max 5 MB each · up to 10 at a time)</label>
     <input id="files" type="file" name="files[]" multiple accept="image/jpeg,image/png,image/webp" required class="block w-full text-sm">
     @if (auth()->user()->hasRole('Super Admin'))<input type="hidden" name="as_hero" value="0"><label class="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" name="as_hero" value="1" class="rounded border-gray-300 text-brand-orange focus:ring-brand-orange"> Also add to the homepage hero rotation</label>@endif
-    <button class="btn-primary mt-4">Upload</button>
+    <button class="btn-primary mt-4"><x-icon name="upload" class="h-4 w-4" />Upload</button>
 </form>
 <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
 @forelse ($items as $m)

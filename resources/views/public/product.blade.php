@@ -10,7 +10,7 @@
 <p class="mt-4 text-brand-graphite">{{ $product->description }}</p>
 @if ($product->is_age_restricted || $business->age_restricted)<p class="mt-4 rounded border border-brand-orange bg-brand-offwhite p-3 text-sm">{{ \App\Services\SettingsService::get('liquor_notice', 'Enjoy responsibly. 18+ only.') }}</p>@endif
 @if ($product->in_stock)
-<form method="POST" action="{{ route('cart.add', $product) }}" class="mt-6 flex items-end gap-3">@csrf<div><label class="label" for="qty">Quantity</label><input id="qty" type="number" name="quantity" value="1" min="1" max="99" class="input w-24"></div><button class="btn-primary">Add to cart</button></form>
+<form method="POST" action="{{ route('cart.add', $product) }}" class="mt-6 flex items-end gap-3">@csrf<div><label class="label" for="qty">Quantity</label><input id="qty" type="number" name="quantity" value="1" min="1" max="99" class="input w-24"></div><button class="btn-primary"><x-icon name="cart" class="h-4 w-4" />Add to cart</button></form>
 @else<p class="mt-6 font-semibold text-gray-500">Out of stock</p>@endif
 </div></section>
 @endsection

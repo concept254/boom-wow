@@ -7,6 +7,6 @@
     @else<input id="{{ $key }}" name="{{ $key }}" value="{{ old($key, \App\Services\SettingsService::get($key)) }}" class="input">@endif
     @error($key)<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
 @endforeach
-<button class="btn-primary">Save settings</button>
+<button class="btn-primary"><x-icon name="check" class="h-4 w-4" />Save settings</button>
 </form>
 @endsection

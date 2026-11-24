@@ -19,8 +19,8 @@
                             @if ($ad->badge)<span class="badge self-start bg-brand-white text-brand-orange">{{ $ad->badge }}</span>@endif
                             <h3 class="mt-2 text-xl !text-inherit">{{ $ad->title }}</h3>
                             @if ($ad->description)<p class="mt-2 text-sm opacity-90">{{ $ad->description }}</p>@endif
-                            @if ($ad->ends_on)<p class="mt-3 text-xs font-bold opacity-80">Ends {{ $ad->ends_on->format('d M Y') }}</p>@endif
-                            @if ($ad->link_url)<a href="{{ \App\Support\Link::href($ad->link_url) }}" class="btn-light mt-auto self-start !mt-5">{{ $ad->cta_label ?: 'Learn more' }}</a>@endif
+                            @if ($ad->ends_on)<p class="mt-3 flex items-center gap-1.5 text-xs font-bold opacity-80"><x-icon name="clock" class="h-3.5 w-3.5" />Ends {{ $ad->ends_on->format('d M Y') }}</p>@endif
+                            @if ($ad->link_url)<a href="{{ \App\Support\Link::href($ad->link_url) }}" class="btn-light mt-auto self-start !mt-5">{{ $ad->cta_label ?: 'Learn more' }}<x-icon name="arrow-right" class="h-4 w-4" /></a>@endif
                         </div>
                     </article>
                 @endforeach
@@ -36,7 +36,7 @@
                         <h3 class="mt-1 text-2xl !text-inherit">{{ $ad->title }}</h3>
                         @if ($ad->description)<p class="mt-1 max-w-2xl text-sm opacity-90">{{ $ad->description }}</p>@endif
                     </div>
-                    @if ($ad->link_url)<a href="{{ \App\Support\Link::href($ad->link_url) }}" class="btn-light shrink-0">{{ $ad->cta_label ?: 'Learn more' }}</a>@endif
+                    @if ($ad->link_url)<a href="{{ \App\Support\Link::href($ad->link_url) }}" class="btn-light shrink-0">{{ $ad->cta_label ?: 'Learn more' }}<x-icon name="arrow-right" class="h-4 w-4" /></a>@endif
                 </div>
             @endforeach
         </section>

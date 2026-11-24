@@ -3,7 +3,7 @@
 <form method="GET" class="mb-4 flex flex-wrap items-end gap-2" role="search">
     <div><label class="label" for="q">Order # or customer</label><input id="q" name="q" value="{{ request('q') }}" class="input"></div>
     <div><label class="label" for="status">Status</label><select id="status" name="status" class="input"><option value="">All</option>@foreach (\App\Models\Order::STATUSES as $s)<option value="{{ $s }}" @selected(request('status') === $s)>{{ ucfirst($s) }}</option>@endforeach</select></div>
-    <button class="btn-dark">Filter</button>
+    <button class="btn-dark"><x-icon name="search" class="h-4 w-4" />Filter</button>
 </form>
 <div class="overflow-x-auto rounded-lg bg-brand-white shadow-sm ring-1 ring-black/5">
 <table class="min-w-full text-sm"><thead class="bg-brand-charcoal text-left text-xs uppercase text-brand-white"><tr><th class="px-4 py-3">Order</th><th class="px-4 py-3">Date</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Fulfilment</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Payment</th><th class="px-4 py-3 text-right">Total</th><th></th></tr></thead><tbody class="divide-y divide-gray-100">

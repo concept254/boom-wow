@@ -5,7 +5,7 @@
             <h3>
                 <button type="button" class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-base font-semibold" @click="open = open === {{ $faq->id }} ? null : {{ $faq->id }}" :aria-expanded="open === {{ $faq->id }}">
                     <span>{{ $faq->question }}</span>
-                    <span class="text-xl leading-none text-brand-orange" x-text="open === {{ $faq->id }} ? '−' : '+'" aria-hidden="true">+</span>
+                    <x-icon name="chevron-down" class="h-5 w-5 text-brand-orange transition-transform" x-bind:class="open === {{ $faq->id }} ? 'rotate-180' : ''" />
                 </button>
             </h3>
             <div x-cloak x-show="open === {{ $faq->id }}" x-transition class="px-5 pb-5 text-sm text-brand-graphite">{{ $faq->answer }}</div>

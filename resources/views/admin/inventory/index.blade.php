@@ -3,7 +3,7 @@
 <form method="GET" class="mb-4 flex flex-wrap items-end gap-2" role="search">
     <div><label class="label" for="q">Product or SKU</label><input id="q" name="q" value="{{ request('q') }}" class="input"></div>
     <div><label class="label" for="filter">Show</label><select id="filter" name="filter" class="input"><option value="">All</option><option value="low" @selected(request('filter') === 'low')>Low stock</option><option value="out" @selected(request('filter') === 'out')>Out of stock</option></select></div>
-    <button class="btn-dark">Filter</button>
+    <button class="btn-dark"><x-icon name="search" class="h-4 w-4" />Filter</button>
 </form>
 <div class="overflow-x-auto rounded-lg bg-brand-white shadow-sm ring-1 ring-black/5">
 <table class="min-w-full text-sm"><thead class="bg-brand-charcoal text-left text-xs uppercase text-brand-white"><tr><th class="px-4 py-3">Product</th><th class="px-4 py-3">Business</th><th class="px-4 py-3">Qty</th><th class="px-4 py-3">Reorder</th><th class="px-4 py-3">Value (cost)</th><th class="px-4 py-3">Adjust stock</th></tr></thead><tbody class="divide-y divide-gray-100">

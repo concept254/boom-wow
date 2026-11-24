@@ -11,7 +11,7 @@
         <div>
             <p class="eyebrow">Our story</p><h2 class="mt-2 text-3xl sm:text-4xl">Who we are</h2>
             <div class="mt-5 space-y-4 text-brand-graphite">
-                @forelse ($paragraphs as $p)<p>{{ $p }}</p>@empty<p>Boom &amp; Wow Holdings operates a salon, a liquor store, IT consultants, property management and events management - bringing exceptional services, products and experiences together under one roof.</p>@endforelse
+                @forelse ($paragraphs as $p)<p>{{ $p }}</p>@empty<p>Boom &amp; Wow Holdings brings together {{ \Illuminate\Support\Arr::join($businesses->pluck('name')->map(fn ($n) => \Illuminate\Support\Str::lower($n))->all(), ', ', ' and ') }} - bringing exceptional services, products and experiences together under one roof.</p>@endforelse
             </div>
         </div>
         <dl class="grid grid-cols-2 gap-4 self-start">
@@ -26,15 +26,15 @@
 <section class="bg-brand-offwhite"><div class="section">
     <p class="eyebrow">Why choose us</p><h2 class="mt-2 text-3xl sm:text-4xl">What we stand for</h2>
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        @foreach ([['Quality first', 'Experienced teams and carefully chosen products in every business.'], ['One account', 'Book, order and enquire across every store with a single login.'], ['Always transparent', 'Clear pricing, clear availability, clear confirmations.'], ['Community minded', 'Local people serving local customers, responsibly.']] as [$t, $d])
-            <div class="card p-6"><div class="h-1.5 w-10 rounded-full bg-brand-orange"></div><h3 class="mt-4 text-lg">{{ $t }}</h3><p class="mt-2 text-sm text-brand-graphite">{{ $d }}</p></div>
+        @foreach ([['Quality first', 'Experienced teams and carefully chosen products in every business.', 'award'], ['One account', 'Book, order and enquire across every store with a single login.', 'user-check'], ['Always transparent', 'Clear pricing, clear availability, clear confirmations.', 'shield-check'], ['Community minded', 'Local people serving local customers, responsibly.', 'heart']] as [$t, $d, $ico])
+            <div class="card p-6"><span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange"><x-icon :name="$ico" class="h-5 w-5" /></span><div class="mt-4 h-1 w-10 rounded-full bg-brand-orange"></div><h3 class="mt-4 text-lg">{{ $t }}</h3><p class="mt-2 text-sm text-brand-graphite">{{ $d }}</p></div>
         @endforeach
     </div>
 </div></section>
 
 {{-- Our businesses --}}
 <section class="section">
-    <div class="flex items-end justify-between gap-4"><div><p class="eyebrow">Our businesses</p><h2 class="mt-2 text-3xl sm:text-4xl">Find the right store</h2></div><a href="{{ route('businesses') }}" class="text-sm font-bold text-brand-orange hover:text-brand-orange-dark">View all &rarr;</a></div>
+    <div class="flex items-end justify-between gap-4"><div><p class="eyebrow">Our businesses</p><h2 class="mt-2 text-3xl sm:text-4xl">Find the right store</h2></div><a href="{{ route('businesses') }}" class="inline-flex items-center gap-1 text-sm font-bold text-brand-orange hover:text-brand-orange-dark">View all<x-icon name="arrow-right" class="h-4 w-4" /></a></div>
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         @foreach ($businesses as $b)
             <a href="{{ route('business', $b) }}" class="card group overflow-hidden"><img src="{{ $b->cover_url }}" alt="" loading="lazy" class="h-36 w-full object-cover" onerror="this.style.display='none'"><div class="p-5"><h3 class="text-lg group-hover:text-brand-orange">{{ $b->name }}</h3><p class="mt-1 line-clamp-2 text-sm text-brand-graphite">{{ $b->tagline }}</p></div></a>

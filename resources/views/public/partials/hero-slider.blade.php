@@ -15,7 +15,7 @@
                         <h2 class="mt-4 text-4xl font-bold leading-tight !text-brand-white sm:text-5xl lg:text-6xl">{{ $slide->heading }}</h2>
                         @if ($slide->subheading)<p class="mt-5 max-w-xl text-lg text-gray-100">{{ $slide->subheading }}</p>@endif
                         <div class="mt-8 flex flex-wrap gap-3">
-                            @if ($slide->cta_label)<a href="{{ \App\Support\Link::href($slide->cta_url) }}" class="btn-primary !px-7 !py-3 text-base">{{ $slide->cta_label }}</a>@endif
+                            @if ($slide->cta_label)<a href="{{ \App\Support\Link::href($slide->cta_url) }}" class="btn-primary !px-7 !py-3 text-base">{{ $slide->cta_label }}<x-icon name="arrow-right" class="h-5 w-5" /></a>@endif
                             @if ($slide->cta2_label)<a href="{{ \App\Support\Link::href($slide->cta2_url) }}" class="btn-outline-light !px-7 !py-3 text-base">{{ $slide->cta2_label }}</a>@endif
                         </div>
                     </div>
@@ -32,8 +32,8 @@
                     @endforeach
                 </div>
                 <div class="flex gap-2">
-                    <button type="button" @click="prev()" class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-white/15 text-xl hover:bg-brand-orange" aria-label="Previous slide">&#8249;</button>
-                    <button type="button" @click="next()" class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-white/15 text-xl hover:bg-brand-orange" aria-label="Next slide">&#8250;</button>
+                    <button type="button" @click="prev()" class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-white/15 text-xl hover:bg-brand-orange" aria-label="Previous slide"><x-icon name="chevron-left" class="h-5 w-5" /></button>
+                    <button type="button" @click="next()" class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-white/15 text-xl hover:bg-brand-orange" aria-label="Next slide"><x-icon name="chevron-right" class="h-5 w-5" /></button>
                 </div>
             </div>
         @endif

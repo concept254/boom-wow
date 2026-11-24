@@ -29,7 +29,7 @@
                     <li class="flex items-center gap-2">
                         @if ($i > 0)<span aria-hidden="true" class="text-brand-orange">/</span>@endif
                         @if ($c[1] && ! $loop->last)
-                            <a href="{{ $c[1] }}" class="hover:text-brand-white">{{ $c[0] }}</a>
+                            <a href="{{ $c[1] }}" class="inline-flex items-center gap-1.5 hover:text-brand-white">@if ($i === 0)<x-icon name="home" class="h-3.5 w-3.5" />@endif{{ $c[0] }}</a>
                         @else
                             <span class="text-brand-white" @if ($loop->last) aria-current="page" @endif>{{ $c[0] }}</span>
                         @endif

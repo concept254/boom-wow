@@ -6,7 +6,7 @@
             @if ($text)<p class="mt-2 text-sm opacity-90 sm:text-base">{{ $text }}</p>@endif
         </div>
         <div class="flex flex-wrap gap-3">
-            @if ($label)<a href="{{ \App\Support\Link::href($url) }}" class="{{ $tone === 'orange' ? 'btn-light' : 'btn-primary' }}">{{ $label }}</a>@endif
+            @if ($label)<a href="{{ \App\Support\Link::href($url) }}" class="{{ $tone === 'orange' ? 'btn-light' : 'btn-primary' }}">{{ $label }}<x-icon name="arrow-right" class="h-4 w-4" /></a>@endif
             @if ($label2)<a href="{{ \App\Support\Link::href($url2) }}" class="btn-outline-light">{{ $label2 }}</a>@endif
         </div>
     </div>

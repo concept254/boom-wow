@@ -15,7 +15,7 @@
     <div><h2 class="text-2xl font-bold">Services</h2>
         <div class="mt-4 divide-y divide-gray-200 rounded-lg bg-brand-white ring-1 ring-black/5">@foreach ($services as $svc)
             <div class="flex flex-wrap items-center justify-between gap-3 p-4"><div><p class="font-semibold">{{ $svc->name }}</p><p class="text-sm text-brand-graphite">{{ $svc->duration_minutes }} min · {{ $svc->price_label }} R{{ number_format($svc->price, 2) }}</p></div>
-            @if ($business->accepts_bookings && $svc->is_bookable)<a class="btn-primary" href="{{ route('portal.bookings.new', ['service' => $svc->id]) }}">Book</a>@endif</div>
+            @if ($business->accepts_bookings && $svc->is_bookable)<a class="btn-primary" href="{{ route('portal.bookings.new', ['service' => $svc->id]) }}"><x-icon name="calendar-check" class="h-4 w-4" />Book</a>@endif</div>
         @endforeach</div></div>
     @endif
 
@@ -47,10 +47,10 @@
 </div>
 
 <aside class="space-y-6">
-    <div class="card p-5"><h2 class="text-lg font-semibold">Contact</h2><ul class="mt-3 space-y-1 text-sm text-brand-graphite"><li>{{ $business->address }}, {{ $business->city }}</li><li>{{ $business->phone }}</li><li>{{ $business->email }}</li>
+    <div class="card p-5"><h2 class="flex items-center gap-2 text-lg font-semibold"><x-icon name="map-pin" class="h-5 w-5 text-brand-orange" />Contact</h2><ul class="mt-3 space-y-2 text-sm text-brand-graphite"><li class="flex items-start gap-2"><x-icon name="map-pin" class="mt-0.5 h-4 w-4 text-brand-orange" /><span>{{ $business->address }}, {{ $business->city }}</span></li><li class="flex items-center gap-2"><x-icon name="phone" class="h-4 w-4 text-brand-orange" />{{ $business->phone }}</li><li class="flex items-center gap-2"><x-icon name="mail" class="h-4 w-4 text-brand-orange" />{{ $business->email }}</li>
         @foreach (($business->social_links ?? []) as $name => $url)<li><a class="text-brand-orange hover:text-brand-orange-dark" rel="noopener" href="{{ $url }}">{{ ucfirst($name) }}</a></li>@endforeach</ul>
         @if ($business->latitude && $business->longitude)<a class="mt-3 inline-block text-sm text-brand-orange" rel="noopener" href="https://www.openstreetmap.org/?mlat={{ $business->latitude }}&mlon={{ $business->longitude }}#map=16/{{ $business->latitude }}/{{ $business->longitude }}">View on map</a>@endif</div>
-    <div class="card p-5"><h2 class="text-lg font-semibold">Opening hours</h2><table class="mt-3 w-full text-sm">@foreach ($business->hours as $h)<tr><td class="py-1">{{ $days[$h->day_of_week] }}</td><td class="py-1 text-right text-brand-graphite">{{ $h->is_closed ? 'Closed' : substr($h->opens_at, 0, 5).' – '.substr($h->closes_at, 0, 5) }}</td></tr>@endforeach</table></div>
+    <div class="card p-5"><h2 class="flex items-center gap-2 text-lg font-semibold"><x-icon name="clock" class="h-5 w-5 text-brand-orange" />Opening hours</h2><table class="mt-3 w-full text-sm">@foreach ($business->hours as $h)<tr><td class="py-1">{{ $days[$h->day_of_week] }}</td><td class="py-1 text-right text-brand-graphite">{{ $h->is_closed ? 'Closed' : substr($h->opens_at, 0, 5).' – '.substr($h->closes_at, 0, 5) }}</td></tr>@endforeach</table></div>
 </aside>
 </div>
 @include('public.partials.brands-carousel', ['business' => $business, 'heading' => 'Brands at '.$business->name, 'intro' => 'A selection of the brands you will find here.'])
