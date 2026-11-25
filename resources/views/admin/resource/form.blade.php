@@ -43,6 +43,9 @@
             @error($name)<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
         </div>
     @endforeach
+    @if (! empty($cfg['gallery']))
+        @include('admin.resource.partials.gallery')
+    @endif
     <div class="flex gap-3"><button class="btn-primary"><x-icon name="check" class="h-4 w-4" />Save</button><a href="{{ route('admin.resource.index', $resource) }}" class="btn-outline">Cancel</a></div>
 </form>
 @endsection

@@ -60,8 +60,8 @@ class PublicController extends Controller
                 'Products' => Product::published()->count(),
                 'Upcoming events' => Event::published()->where('starts_at', '>=', now())->count(),
             ],
-            'services' => Service::with('business')->published()->where('is_featured', true)->limit(6)->get(),
-            'products' => Product::with(['business', 'images'])->published()->where('is_featured', true)->limit(8)->get(),
+            'services' => Service::with(['business', 'images'])->withRatings()->published()->where('is_featured', true)->limit(6)->get(),
+            'products' => Product::with(['business', 'images'])->withRatings()->published()->where('is_featured', true)->limit(8)->get(),
             'faqs' => Faq::published()->orderBy('sort_order')->limit(6)->get(),
             'testimonials' => Testimonial::published()->latest()->limit(3)->get(),
         ]);
@@ -125,7 +125,7 @@ class PublicController extends Controller
         return view('public.business', [
             'business' => $business,
             'services' => $business->services()->published()->orderBy('name')->get(),
-            'products' => $business->sells_products ? $business->products()->with(['images', 'inventory'])->published()->limit(12)->get() : collect(),
+            'products' => $business->sells_products ? $business->products()->with(['images', 'inventory'])->withRatings()->published()->limit(12)->get() : collect(),
             'properties' => $business->properties()->published()->latest()->limit(6)->get(),
             'events' => $business->events()->published()->where('starts_at', '>=', now())->orderBy('starts_at')->limit(6)->get(),
             'portfolio' => $business->portfolioItems()->published()->limit(6)->get(),
@@ -135,12 +135,32 @@ class PublicController extends Controller
 
     public function services(Request $request)
     {
-        $services = Service::with('business')->published()
+        $services = Service::with(['business', 'images'])->withRatings()->published()
             ->when($request->business, fn ($q, $b) => $q->whereHas('business', fn ($x) => $x->where('slug', $b)))
             ->when($request->q, fn ($q, $t) => $q->where('name', 'like', '%'.addcslashes($t, '%_\\').'%'))
             ->orderBy('name')->paginate(12)->withQueryString();
 
         return view('public.services', ['services' => $services, 'businesses' => BusinessUnit::published()->get()]);
+    }
+
+    public function service(Request $request, Service $service)
+    {
+        abort_unless($service->status === 'published', 404);
+        $service->load(['business', 'images', 'staff']);
+        $user = $request->user();
+
+        $related = Service::with(['business', 'images'])->withRatings()->published()
+            ->where('id', '!=', $service->id)
+            ->orderByRaw('CASE WHEN service_category_id = ? THEN 0 WHEN business_unit_id = ? THEN 1 ELSE 2 END', [$service->service_category_id ?? 0, $service->business_unit_id])
+            ->orderByDesc('is_featured')->latest()->limit(4)->get();
+
+        return view('public.service', [
+            'service' => $service, 'business' => $service->business, 'related' => $related,
+            'stats' => $service->reviewStats(),
+            'reviews' => $service->reviews()->where('status', 'published')->latest()->limit(20)->get(),
+            'userReview' => $user ? $service->reviews()->where('user_id', $user->id)->first() : null,
+            'verified' => $user ? ReviewController::isVerified($user->id, 'service', $service->id) : false,
+        ]);
     }
 
     public function events() { return view('public.events', ['events' => Event::with('business')->published()->where('starts_at', '>=', now()->startOfDay())->orderBy('starts_at')->paginate(12)]); }

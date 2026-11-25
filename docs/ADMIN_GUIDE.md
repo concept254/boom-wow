@@ -72,3 +72,15 @@ Emails: registration/verification, booking confirmation and reminders, order con
 
 ## Hero image & logo
 Add images to `public/images/hero/` or via Media Library. The logo is a transparent SVG (`public/images/logo.svg` for light surfaces, `logo-dark.svg` for the dark header/footer), traced from the client's print JPG with the tagline removed. Favicons: `public/favicon.ico`, `images/favicon.svg`, `apple-touch-icon.png`. If the client later supplies an official vector, replace those files keeping the same names. The original JPG stays as `logo.jpg` and is only a fallback.
+
+## Product and service photos
+Open **Products** (or **Services**) and add or edit an item. In the **Photos** section you can:
+- Upload up to 12 photos at once (JPG, PNG or WebP, 5 MB each). They are resized automatically.
+- Tick **Main photo** on the one shown on cards and as the first gallery image.
+- Add a caption to each photo, such as "Rose gold" or "750ml". Captions appear under the large image and act as product options.
+- Change the order number to reorder, or tick **Remove** to delete a photo. Everything is saved with the normal Save button.
+
+Also fill in **Short summary** and **Highlights** (one bullet per line). They appear next to the price on the product page. Items with no photo show a neutral placeholder.
+
+## Customer reviews
+Customers who are logged in can rate and review products and services. New reviews are **pending** and do not show publicly. Open **Customer Reviews**, set the status to **published** to approve one, and optionally write a public reply. Reviews from customers who bought the product or completed the booking are labelled "Verified".

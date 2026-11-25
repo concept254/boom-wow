@@ -42,7 +42,7 @@
                         @if ($open !== null)<span class="badge absolute left-3 top-3 {{ $open ? 'bg-green-600 text-brand-white' : 'bg-brand-charcoal text-brand-white' }}">{{ $open ? 'Open now' : 'Closed now' }}</span>@endif
                     </div>
                     <div class="p-5">
-                        <div class="-mt-12 mb-2 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-brand-white shadow ring-1 ring-black/5">
+                        <div class="relative z-10 -mt-12 mb-2 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-brand-white shadow ring-1 ring-black/5">
                             @if ($b->logo_url)<img src="{{ $b->logo_url }}" alt="" class="h-full w-full object-contain p-1">@else<x-icon :name="$b->icon_name" class="h-7 w-7 text-brand-orange" />@endif
                         </div>
                         <h3 class="text-xl"><a href="{{ route('business', $b) }}" class="after:absolute after:inset-0 hover:text-brand-orange">{{ $b->name }}</a></h3>

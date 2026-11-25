@@ -89,4 +89,42 @@ async function initCharts() {
 }
 document.addEventListener('DOMContentLoaded', initCharts);
 
+/** Product / service photo gallery: thumbnails, previous/next, hover zoom, and a full-screen lightbox with keyboard support. */
+Alpine.data('productGallery', (slides) => ({
+    slides,
+    i: 0,
+    lightbox: false,
+    zoom: false,
+    origin: '50% 50%',
+    get current() { return this.slides[this.i]; },
+    go(n) { this.i = (n + this.slides.length) % this.slides.length; },
+    next() { this.go(this.i + 1); },
+    prev() { this.go(this.i - 1); },
+    move(e) {
+        const r = e.currentTarget.getBoundingClientRect();
+        this.origin = `${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%`;
+    },
+    open() { if (!this.current.placeholder) { this.lightbox = true; document.body.classList.add('overflow-hidden'); } },
+    close() { this.lightbox = false; document.body.classList.remove('overflow-hidden'); },
+}));
+
+/** Quantity stepper for the buy box. */
+Alpine.data('qtyStepper', (max = 99) => ({
+    qty: 1,
+    max,
+    inc() { this.qty = Math.min(this.max, this.qty + 1); },
+    dec() { this.qty = Math.max(1, this.qty - 1); },
+    clamp() { this.qty = Math.min(this.max, Math.max(1, parseInt(this.qty, 10) || 1)); },
+}));
+
+/** Share buttons: native share sheet where available, plus copy-link feedback. */
+Alpine.data('shareLinks', (url, title) => ({
+    copied: false,
+    canNative: typeof navigator !== 'undefined' && !!navigator.share,
+    async copy() {
+        try { await navigator.clipboard.writeText(url); this.copied = true; setTimeout(() => (this.copied = false), 2000); } catch (e) { window.prompt('Copy this link', url); }
+    },
+    native() { navigator.share({ title, url }).catch(() => {}); },
+}));
+
 Alpine.start();

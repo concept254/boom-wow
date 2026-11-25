@@ -81,3 +81,10 @@ Icons are inline SVGs (no icon font, no extra requests, no dependencies - safe f
 * An unknown name renders a neutral circle instead of failing, so a typo never breaks a page.
 * Businesses get an icon automatically from their name/category (`BusinessUnit::icon_name`: scissors, wine, shirt, laptop, building, ticket, or store).
 * The admin sidebar is defined at the top of `resources/views/layouts/admin.blade.php` as `[label, url, permission, icon, group]` rows; add a row to add a menu item.
+
+## Galleries, reviews and the product page
+- `products` and `services` have `'gallery' => true` in `config/admin.php`; `ResourceController::syncGallery()` handles uploads, captions, order, main photo and removal in the same POST.
+- `App\Services\ImageUploader` resizes with GD and falls back to a plain store.
+- Reviews are polymorphic (`reviews` table, `HasReviews` trait, `withRatings()` scope counts published reviews only). Submissions go through `ReviewController` and always start `pending`.
+- Page parts live in `resources/views/public/partials/` (`gallery`, `reviews`, `share`, `product-card`, `service-card`). Structured data (JSON-LD) is pushed to the `head` stack.
+- Not built: product variants with separate stock. Photo captions are display-only options.

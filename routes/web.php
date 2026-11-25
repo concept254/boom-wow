@@ -16,6 +16,7 @@ Route::controller(PublicController::class)->group(function () {
     Route::get('/businesses', 'businesses')->name('businesses');
     Route::get('/businesses/{business:slug}', 'business')->name('business');
     Route::get('/services', 'services')->name('services');
+    Route::get('/services/{service:slug}', 'service')->name('service');
     Route::get('/events', 'events')->name('events');
     Route::get('/events/{event:slug}', 'event')->name('event');
     Route::get('/properties', 'properties')->name('properties');
@@ -44,6 +45,8 @@ Route::controller(ShopController::class)->group(function () {
         Route::post('/checkout', 'place')->middleware('throttle:forms')->name('checkout.place');
     });
 });
+
+Route::post('/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->middleware(['auth', 'throttle:forms'])->name('reviews.store');
 
 // ---- Authentication ----------------------------------------------------------
 Route::middleware('guest')->controller(AuthController::class)->group(function () {

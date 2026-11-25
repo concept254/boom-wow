@@ -1,6 +1,6 @@
 # Boom & Wow Holdings
 
-A multi-business website and management platform for **Boom & Wow Holdings**. One Laravel application serves the public corporate site, online storefronts, a customer portal and a back-office admin for all five businesses.
+A multi-business website and management platform for **Boom & Wow Holdings**. One Laravel application serves the public corporate site, online storefronts, a customer portal and a back-office admin for all six businesses.
 
 ![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)

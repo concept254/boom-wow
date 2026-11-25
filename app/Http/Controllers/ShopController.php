@@ -13,7 +13,7 @@ class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::with(['business', 'images', 'inventory', 'category'])->published()
+        $products = Product::with(['business', 'images', 'inventory', 'category'])->withRatings()->published()
             ->when($request->business, fn ($q, $b) => $q->whereHas('business', fn ($x) => $x->where('slug', $b)))
             ->when($request->q, function ($q, $t) {
                 $like = '%'.addcslashes($t, '%_\\').'%';
@@ -24,11 +24,31 @@ class ShopController extends Controller
         return view('public.products', ['products' => $products, 'businesses' => BusinessUnit::published()->where('sells_products', true)->get()]);
     }
 
-    public function show(BusinessUnit $business, string $slug)
+    public function show(Request $request, BusinessUnit $business, string $slug)
     {
-        $product = $business->products()->with(['images', 'inventory', 'category'])->published()->where('slug', $slug)->firstOrFail();
+        $product = $business->products()->with(['images', 'inventory', 'category'])->published()->withRatings()->where('slug', $slug)->firstOrFail();
+        $user = $request->user();
 
-        return view('public.product', ['product' => $product, 'business' => $business]);
+        // Related: same category first, then the same business, then anything else popular.
+        $related = Product::with(['business', 'images', 'inventory'])->withRatings()->published()
+            ->where('id', '!=', $product->id)
+            ->orderByRaw('CASE WHEN product_category_id = ? THEN 0 WHEN business_unit_id = ? THEN 1 ELSE 2 END', [$product->product_category_id ?? 0, $business->id])
+            ->orderByDesc('is_featured')->latest()->limit(4)->get();
+
+        // Recently viewed (this visitor's session only), excluding the product on screen.
+        $seen = array_values(array_filter((array) session('recent_products', []), fn ($id) => $id !== $product->id));
+        $recent = $seen
+            ? Product::with(['business', 'images', 'inventory'])->withRatings()->published()->whereIn('id', array_slice($seen, 0, 4))->get()->sortBy(fn ($p) => array_search($p->id, $seen))->values()
+            : collect();
+        session(['recent_products' => array_slice(array_merge([$product->id], $seen), 0, 12)]);
+
+        return view('public.product', [
+            'product' => $product, 'business' => $business, 'related' => $related, 'recent' => $recent,
+            'stats' => $product->reviewStats(),
+            'reviews' => $product->reviews()->where('status', 'published')->latest()->limit(20)->get(),
+            'userReview' => $user ? $product->reviews()->where('user_id', $user->id)->first() : null,
+            'verified' => $user ? ReviewController::isVerified($user->id, 'product', $product->id) : false,
+        ]);
     }
 
     public function cart(CartService $cart) { return view('public.cart', ['lines' => $cart->lines(), 'total' => $cart->total()]); }
@@ -37,6 +57,11 @@ class ShopController extends Controller
     {
         abort_unless($product->status === 'published', 404);
         $cart->add($product, (int) $request->input('quantity', 1));
+
+        // "Buy now" skips the cart page and goes straight to checkout.
+        if ($request->boolean('buy_now')) {
+            return redirect()->route('checkout');
+        }
 
         return redirect()->route('cart')->with('status', "{$product->name} added to your cart.");
     }

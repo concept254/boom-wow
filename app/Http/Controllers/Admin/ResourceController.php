@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\ActivityLogger;
+use App\Services\ImageUploader;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -83,6 +84,7 @@ class ResourceController extends Controller
 
         $data = $this->validated($request, $cfg, null);
         $row = $cfg['model']::create($data);
+        $this->syncGallery($request, $row, $cfg);
         ActivityLogger::log('created', "Created {$cfg['label']} #{$row->getKey()}", $row);
 
         return redirect()->route('admin.resource.index', $resource)->with('status', 'Created.');
@@ -103,6 +105,7 @@ class ResourceController extends Controller
 
         $row = $this->find($cfg, $id);
         $row->update($this->validated($request, $cfg, $row));
+        $this->syncGallery($request, $row, $cfg);
         ActivityLogger::log('updated', "Updated {$cfg['label']} #{$row->getKey()}", $row);
 
         return redirect()->route('admin.resource.index', $resource)->with('status', 'Saved.');
@@ -132,6 +135,18 @@ class ResourceController extends Controller
         }
         $data = $request->validate($rules);
 
+        if ($cfg['gallery'] ?? false) {
+            // Validated up front so nothing is saved if a photo is invalid.
+            $request->validate([
+                'gallery' => ['nullable', 'array', 'max:12'],
+                'gallery.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'image_alt.*' => ['nullable', 'string', 'max:150'],
+                'image_order.*' => ['nullable', 'integer', 'min:0', 'max:999'],
+                'primary_image' => ['nullable', 'integer'],
+                'remove_images.*' => ['integer'],
+            ], ['gallery.*.image' => 'Each gallery file must be an image (JPG, PNG or WebP).', 'gallery.*.max' => 'Each gallery image must be 5 MB or smaller.']);
+        }
+
         // Business-unit isolation on writes: non-super users may only write to their own businesses.
         if (($cfg['scoped'] ?? false) && ! $user->hasRole('Super Admin')) {
             abort_unless($user->canAccessBusiness((int) $data['business_unit_id']), 403);
@@ -150,7 +165,7 @@ class ResourceController extends Controller
                 $data[$name] = array_values(array_filter(array_map('trim', preg_split('/\R/', (string) ($data[$name] ?? '')) ?: [])));
             } elseif ($f['type'] === 'image') {
                 if ($request->hasFile($name)) {
-                    $data[$name] = $request->file($name)->store($cfg['permission'], 'public');
+                    $data[$name] = ImageUploader::store($request->file($name), $cfg['permission'], 2000);
                     if ($row?->{$name}) {
                         Storage::disk('public')->delete($row->{$name});
                     }
@@ -171,6 +186,45 @@ class ResourceController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * Product/service photo gallery: add (several at once), caption, reorder, choose the main photo, delete.
+     * Everything arrives in the same form POST, so there is a single Save button.
+     */
+    private function syncGallery(Request $request, Model $row, array $cfg): void
+    {
+        if (! ($cfg['gallery'] ?? false)) {
+            return;
+        }
+        $images = $row->images()->get();
+
+        foreach ($images->whereIn('id', array_map('intval', (array) $request->input('remove_images', []))) as $img) {
+            Storage::disk('public')->delete($img->path);
+            $img->delete();
+        }
+        $images = $row->images()->get();
+
+        foreach ($images as $img) {
+            $img->update([
+                'alt' => $request->input("image_alt.{$img->id}", $img->alt),
+                'sort_order' => (int) $request->input("image_order.{$img->id}", $img->sort_order),
+            ]);
+        }
+
+        $next = (int) $row->images()->max('sort_order') + 1;
+        foreach ((array) $request->file('gallery', []) as $file) {
+            $row->images()->create(['path' => ImageUploader::store($file, $cfg['permission'].'/gallery', 1600), 'sort_order' => $next++, 'is_primary' => false]);
+        }
+
+        $all = $row->images()->get();
+        $primary = $all->firstWhere('id', (int) $request->input('primary_image')) ?? $all->firstWhere('is_primary', true) ?? $all->sortBy('sort_order')->first();
+        foreach ($all as $img) {
+            $should = $primary && $img->id === $primary->id;
+            if ($img->is_primary !== $should) {
+                $img->update(['is_primary' => $should]);
+            }
+        }
     }
 
     private function businessOptions(Request $request)

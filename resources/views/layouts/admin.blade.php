@@ -10,6 +10,7 @@
         ['Orders', route('admin.orders.index'), 'orders.view', 'bag', 'Sales'],
         ['Bookings', route('admin.bookings.index'), 'bookings.view', 'calendar-check', 'Sales'],
         ['Enquiries', route('admin.resource.index', 'enquiries'), 'enquiries.view', 'message', 'Sales'],
+        ['Customer Reviews', route('admin.resource.index', 'reviews'), 'enquiries.view', 'star', 'Sales'],
         ['Customers', route('admin.customers'), 'customers.view', 'users', 'Sales'],
 
         ['Business Units', route('admin.resource.index', 'business-units'), 'businesses.view', 'store', 'Businesses'],
