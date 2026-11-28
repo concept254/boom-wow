@@ -140,4 +140,95 @@ Alpine.data('shareLinks', (url, title) => ({
     native() { navigator.share({ title, url }).catch(() => {}); },
 }));
 
+/* ---- Loading states (styles in app.css) ---------------------------------- */
+(function loadingStates() {
+    const root = document.documentElement;
+
+    function done(img) {
+        img.classList.add('is-loaded');
+        const p = img.parentElement;
+        if (p) {
+            p.classList.remove('bw-skel');
+            p.querySelectorAll(':scope > .bw-spin').forEach((s) => s.remove());
+        }
+    }
+
+    function track(img) {
+        img.classList.remove('is-loaded');
+        if (img.complete) { done(img); return; }          // cached, or failed: nothing to wait for
+        const p = img.parentElement;
+        if (p) {
+            p.classList.add('bw-skel');
+            if (img.hasAttribute('data-spinner')) {
+                if (getComputedStyle(p).position === 'static') p.style.position = 'relative';
+                if (!p.querySelector(':scope > .bw-spin')) {
+                    const s = document.createElement('span');
+                    s.className = 'bw-spin';
+                    s.setAttribute('aria-hidden', 'true');
+                    p.appendChild(s);
+                }
+            }
+        }
+        img.addEventListener('load', () => done(img), { once: true });
+        img.addEventListener('error', () => done(img), { once: true });
+    }
+
+    const selector = 'img[loading="lazy"], img[data-spinner]';
+    document.querySelectorAll(selector).forEach((img) => { if (img.complete) img.classList.add('is-loaded'); });
+    root.classList.add('js');                              // only now can images be hidden, so there is no flash
+    document.querySelectorAll(selector).forEach((img) => { if (!img.complete) track(img); });
+
+    // Images whose src is swapped by Alpine (product gallery) show the spinner again for the next photo.
+    new MutationObserver((list) => list.forEach((m) => {
+        if (m.target.matches && m.target.matches('img[data-spinner]')) track(m.target);
+    })).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['src'] });
+
+    // Thin progress bar while the next page loads.
+    const bar = document.createElement('div');
+    bar.id = 'bw-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+    let barTimer;
+    const start = () => { bar.classList.remove('is-active'); void bar.offsetWidth; bar.classList.add('is-active'); clearTimeout(barTimer); barTimer = setTimeout(stop, 15000); };   // a download keeps the page open: never leave the bar hanging
+    const stop = () => bar.classList.remove('is-active');
+
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest && e.target.closest('a[href]');
+        if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (a.target && a.target !== '_self') return;
+        if (a.hasAttribute('download') || a.hasAttribute('data-no-progress')) return;
+        const url = new URL(a.href, location.href);
+        if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+        if (url.pathname === location.pathname && url.search === location.search) return;   // same page / #anchor
+        start();
+    });
+
+    // Forms: progress bar plus a spinner inside the pressed button. Not disabled, so button values still submit.
+    document.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (e.defaultPrevented || form.hasAttribute('data-no-busy')) return;
+        if (form.dataset.submitting) { e.preventDefault(); return; }    // ignore double clicks
+        form.dataset.submitting = '1';
+        const btn = e.submitter || form.querySelector('button[type="submit"], button:not([type])');
+        if (btn && !btn.querySelector('.bw-spin-inline')) {
+            btn.classList.add('is-busy');
+            btn.setAttribute('aria-busy', 'true');
+            const s = document.createElement('span');
+            s.className = 'bw-spin-inline';
+            s.setAttribute('aria-hidden', 'true');
+            btn.prepend(s);
+        }
+        start();
+        setTimeout(() => { delete form.dataset.submitting; if (btn) { btn.classList.remove('is-busy'); btn.removeAttribute('aria-busy'); btn.querySelectorAll('.bw-spin-inline').forEach((x) => x.remove()); } }, 20000);   // e.g. a file download: the page never changes
+    });
+
+    // Back/forward cache: undo the busy state when the page is shown again.
+    window.addEventListener('pageshow', (e) => {
+        stop();
+        if (!e.persisted) return;
+        document.querySelectorAll('form[data-submitting]').forEach((f) => delete f.dataset.submitting);
+        document.querySelectorAll('.is-busy').forEach((b) => { b.classList.remove('is-busy'); b.removeAttribute('aria-busy'); b.querySelectorAll('.bw-spin-inline').forEach((s) => s.remove()); });
+    });
+})();
+
 Alpine.start();

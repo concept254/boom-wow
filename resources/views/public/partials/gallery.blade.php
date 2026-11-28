@@ -18,7 +18,7 @@
     <div class="relative flex-1">
         <div class="relative aspect-square overflow-hidden rounded-lg bg-brand-offwhite ring-1 ring-black/5" x-bind:class="current.placeholder ? '' : 'cursor-zoom-in'"
              x-on:click="open()" x-on:mouseenter="zoom = true" x-on:mouseleave="zoom = false" x-on:mousemove="move($event)">
-            <img src="{{ $first['url'] }}" alt="{{ $first['alt'] }}" x-bind:src="current.url" x-bind:alt="current.alt" fetchpriority="high"
+            <img src="{{ $first['url'] }}" alt="{{ $first['alt'] }}" x-bind:src="current.url" x-bind:alt="current.alt" data-spinner fetchpriority="high"
                  class="h-full w-full object-contain transition-transform duration-200"
                  x-bind:style="zoom && !current.placeholder ? 'transform: scale(1.9); transform-origin: ' + origin : ''">
             @if (! empty($badge))<span class="badge absolute left-3 top-3 bg-brand-orange text-brand-white">{{ $badge }}</span>@endif
@@ -38,8 +38,8 @@
             <button type="button" x-on:click="prev()" aria-label="Previous photo" class="absolute left-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-brand-white/15 text-brand-white hover:bg-brand-orange"><x-icon name="chevron-left" class="h-6 w-6" /></button>
             <button type="button" x-on:click="next()" aria-label="Next photo" class="absolute right-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-brand-white/15 text-brand-white hover:bg-brand-orange"><x-icon name="chevron-right" class="h-6 w-6" /></button>
         @endif
-        <figure class="max-h-full max-w-5xl text-center">
-            <img x-bind:src="current.url" x-bind:alt="current.alt" class="mx-auto max-h-[80vh] w-auto rounded object-contain">
+        <figure class="relative min-h-[12rem] min-w-[12rem] max-h-full max-w-5xl text-center">
+            <img x-bind:src="current.url" x-bind:alt="current.alt" data-spinner class="mx-auto max-h-[80vh] w-auto rounded object-contain">
             <figcaption class="mt-3 text-sm text-gray-200"><span x-text="current.caption || current.alt"></span> <span class="text-gray-400" x-text="slides.length > 1 ? '(' + (i + 1) + ' / ' + slides.length + ')' : ''"></span></figcaption>
         </figure>
     </div>

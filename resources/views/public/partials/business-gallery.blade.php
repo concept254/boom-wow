@@ -16,8 +16,8 @@
             <button type="button" x-on:click="prev()" aria-label="Previous photo" class="absolute left-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-brand-white/15 text-brand-white hover:bg-brand-white/30"><x-icon name="chevron-left" class="h-6 w-6" /></button>
             <button type="button" x-on:click="next()" aria-label="Next photo" class="absolute right-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-brand-white/15 text-brand-white hover:bg-brand-white/30"><x-icon name="chevron-right" class="h-6 w-6" /></button>
         @endif
-        <figure class="max-h-full max-w-5xl">
-            <img x-bind:src="current.url" x-bind:alt="current.alt" class="max-h-[80vh] w-auto rounded object-contain">
+        <figure class="relative min-h-[12rem] min-w-[12rem] max-h-full max-w-5xl">
+            <img x-bind:src="current.url" x-bind:alt="current.alt" data-spinner class="max-h-[80vh] w-auto rounded object-contain">
             <figcaption x-show="current.caption" x-text="current.caption" class="mt-3 text-center text-sm text-brand-white"></figcaption>
         </figure>
     </div>
