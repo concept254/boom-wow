@@ -6,6 +6,7 @@ use App\Services\Payments\ManualPaymentGateway;
 use App\Services\Payments\PaymentGateway;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Branded pagination (the framework's default relies on Tailwind classes this build does not generate).
+        Paginator::defaultView('vendor.pagination.brand');
+        Paginator::defaultSimpleView('vendor.pagination.brand');
+
         if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
