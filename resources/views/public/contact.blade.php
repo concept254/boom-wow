@@ -31,9 +31,9 @@
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div><label class="label" for="p">Phone (optional)</label><input id="p" class="input" name="phone" value="{{ old('phone') }}"></div>
-                    <div><label class="label" for="s">Subject</label><input id="s" class="input" name="subject_line" value="{{ old('subject_line') }}"></div>
+                    <div><label class="label" for="s">Subject</label><input id="s" class="input" name="subject_line" value="{{ old('subject_line', request('subject')) }}"></div>
                 </div>
-                <div><label class="label" for="m">Message</label><textarea id="m" class="input" rows="5" name="message" required>{{ old('message') }}</textarea>@error('message')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                <div><label class="label" for="m">Message</label><textarea id="m" class="input" rows="5" name="message" required>{{ old('message', request('message')) }}</textarea>@error('message')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
                 <button class="btn-primary"><x-icon name="send" class="h-4 w-4" />Send message</button>
             </form>
         </div>

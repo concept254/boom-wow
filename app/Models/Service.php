@@ -16,11 +16,29 @@ class Service extends Model
 {
     use BelongsToBusiness, HasFactory, HasReviews, SoftDeletes;
 
-    protected $fillable = ['business_unit_id', 'service_category_id', 'name', 'slug', 'description', 'highlights', 'image_path', 'price', 'price_label', 'duration_minutes', 'is_bookable', 'requires_staff', 'is_featured', 'status'];
+    protected $fillable = ['business_unit_id', 'service_category_id', 'name', 'slug', 'description', 'highlights', 'image_path', 'price', 'price_label', 'duration_minutes', 'is_bookable', 'requires_staff', 'is_featured', 'price_on_request', 'status'];
 
     protected function casts(): array
     {
-        return ['price' => 'decimal:2', 'is_bookable' => 'boolean', 'requires_staff' => 'boolean', 'is_featured' => 'boolean', 'highlights' => 'array'];
+        return ['price' => 'decimal:2', 'is_bookable' => 'boolean', 'requires_staff' => 'boolean', 'is_featured' => 'boolean', 'price_on_request' => 'boolean', 'highlights' => 'array'];
+    }
+
+    public function setPriceAttribute($value): void
+    {
+        $this->attributes['price'] = $value === null || $value === '' ? 0 : $value;
+    }
+
+    /** "from R450.00" or "Price on request". */
+    public function getPriceTextAttribute(): string
+    {
+        return $this->price_on_request ? 'Price on request' : trim($this->price_label.' R'.number_format((float) $this->price, 2));
+    }
+
+    public function getQuoteUrlAttribute(): string
+    {
+        $url = route('service', $this);
+
+        return route('contact', ['subject' => 'Quote request: '.$this->name, 'message' => "Hi, please send me a quote for {$this->name} ({$url})."]);
     }
 
     protected static function booted(): void

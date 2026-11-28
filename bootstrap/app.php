@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+        // Shared hosting sits behind the host's nginx proxy: trust it so https is detected and links stay https.
+        $middleware->trustProxies(at: '*');
         $middleware->appendToGroup('web', SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

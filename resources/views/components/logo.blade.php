@@ -1,6 +1,6 @@
 @props(['variant' => 'light', 'class' => 'h-10 w-auto', 'mark' => false])
 @php
-    // Vector logos with transparent backgrounds (traced from the client's print JPG, tagline removed).
+    // Vector logos with transparent backgrounds (traced from the client's print JPG: emblem, name line and web address bar; `mark` = emblem only).
     // 'dark' is for dark surfaces such as the header and footer. If an SVG is missing we fall back to
     // the original JPG (on a white chip for dark surfaces) so the site never shows a broken image.
     $darkPath = config('boomwow.logo.dark');

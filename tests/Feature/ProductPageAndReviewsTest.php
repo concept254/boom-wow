@@ -81,4 +81,16 @@ class ProductPageAndReviewsTest extends TestCase
         $this->get(route('service', $s))->assertOk()->assertSee('Book now')->assertSee('Includes wash');
         $this->get(route('services'))->assertOk()->assertSee($s->name);
     }
+
+    public function test_blank_sort_order_is_saved_as_zero(): void
+    {
+        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $admin = User::factory()->create();
+        $admin->assignRole('Super Admin');
+        $biz = BusinessUnit::factory()->create();
+
+        $this->actingAs($admin)->post(route('admin.resource.store', 'brands'), ['business_unit_id' => $biz->id, 'name' => 'Gordons', 'status' => 'published', 'sort_order' => ''])->assertSessionHasNoErrors();
+        $this->assertSame(0, (int) \App\Models\Brand::where('name', 'Gordons')->value('sort_order'));
+    }
 }
+

@@ -38,16 +38,39 @@ class Product extends Model
         return $promo ? $this->promo_price : $this->price;
     }
 
+    /** Exclusive items can be shown without a price; they are enquired about, never added to the cart. */
+    public function setPriceAttribute($value): void
+    {
+        $this->attributes['price'] = $value === null || $value === '' ? 0 : $value;
+    }
+
+    public function setCostPriceAttribute($value): void
+    {
+        $this->attributes['cost_price'] = $value === null || $value === '' ? 0 : $value;
+    }
+
+    public function getIsPurchasableAttribute(): bool
+    {
+        return ! $this->price_on_request && $this->in_stock;
+    }
+
+    public function getQuoteUrlAttribute(): string
+    {
+        $url = route('product', [$this->business, $this->slug]);
+
+        return route('contact', ['subject' => 'Price request: '.$this->name, 'message' => "Hi, please send me the price and availability for {$this->name} ({$url})."]);
+    }
+
     public function getInStockAttribute(): bool
     {
         return ! $this->track_stock || ($this->inventory?->quantity ?? 0) > 0;
     }
 
-    protected $fillable = ['business_unit_id', 'product_category_id', 'name', 'slug', 'sku', 'barcode', 'brand', 'size', 'description', 'short_description', 'highlights', 'cost_price', 'price', 'promo_price', 'promo_ends_at', 'unit', 'is_featured', 'is_age_restricted', 'track_stock', 'status'];
+    protected $fillable = ['business_unit_id', 'product_category_id', 'name', 'slug', 'sku', 'barcode', 'brand', 'size', 'description', 'short_description', 'highlights', 'cost_price', 'price', 'promo_price', 'promo_ends_at', 'unit', 'is_featured', 'is_age_restricted', 'track_stock', 'price_on_request', 'status'];
 
     protected function casts(): array
     {
-        return ['cost_price' => 'decimal:2', 'price' => 'decimal:2', 'promo_price' => 'decimal:2', 'promo_ends_at' => 'datetime', 'is_featured' => 'boolean', 'is_age_restricted' => 'boolean', 'track_stock' => 'boolean', 'highlights' => 'array'];
+        return ['cost_price' => 'decimal:2', 'price' => 'decimal:2', 'promo_price' => 'decimal:2', 'promo_ends_at' => 'datetime', 'is_featured' => 'boolean', 'is_age_restricted' => 'boolean', 'track_stock' => 'boolean', 'price_on_request' => 'boolean', 'highlights' => 'array'];
     }
 
     public function category(): BelongsTo
@@ -81,7 +104,7 @@ class Product extends Model
     /** Percentage off when a promo price is active, else 0. */
     public function getDiscountPercentAttribute(): int
     {
-        return $this->current_price != $this->price && (float) $this->price > 0 ? (int) round((1 - (float) $this->current_price / (float) $this->price) * 100) : 0;
+        return ! $this->price_on_request && $this->current_price != $this->price && (float) $this->price > 0 ? (int) round((1 - (float) $this->current_price / (float) $this->price) * 100) : 0;
     }
 
     public function inventory(): HasOne

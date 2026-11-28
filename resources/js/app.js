@@ -108,6 +108,19 @@ Alpine.data('productGallery', (slides) => ({
     close() { this.lightbox = false; document.body.classList.remove('overflow-hidden'); },
 }));
 
+/** Photo grid with a full-screen viewer (business galleries). */
+Alpine.data('galleryGrid', (slides) => ({
+    slides,
+    i: 0,
+    open: false,
+    get current() { return this.slides[this.i]; },
+    show(n) { this.i = n; this.open = true; document.body.classList.add('overflow-hidden'); },
+    close() { this.open = false; document.body.classList.remove('overflow-hidden'); },
+    go(n) { this.i = (n + this.slides.length) % this.slides.length; },
+    next() { this.go(this.i + 1); },
+    prev() { this.go(this.i - 1); },
+}));
+
 /** Quantity stepper for the buy box. */
 Alpine.data('qtyStepper', (max = 99) => ({
     qty: 1,

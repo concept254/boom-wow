@@ -1,6 +1,6 @@
-@props(['placement' => 'inner_banner', 'limit' => 1, 'layout' => 'banner', 'title' => null, 'eyebrow' => null])
+@props(['placement' => 'inner_banner', 'limit' => 1, 'layout' => 'banner', 'title' => null, 'eyebrow' => null, 'business' => null])
 @php
-    $ads = \App\Models\Promotion::forPlacement($placement)->limit($limit)->get();
+    $ads = \App\Models\Promotion::forPlacement($placement)->forBusiness($business)->limit($limit)->get();
     $themes = [
         'orange' => 'bg-brand-orange text-brand-white',
         'charcoal' => 'bg-brand-charcoal text-brand-white',

@@ -18,6 +18,7 @@ class Promotion extends Model
         'home_specials' => 'Home page - specials cards',
         'home_banner' => 'Home page - wide advert banner',
         'inner_banner' => 'Inner pages - advert banner',
+        'business_page' => "A business's own page - offer cards (choose the business above)",
     ];
 
     /** Active promotions for a placement (published + inside the date window), in display order. */
@@ -27,6 +28,11 @@ class Promotion extends Model
             ->where(fn ($w) => $w->whereNull('starts_on')->orWhere('starts_on', '<=', today()))
             ->where(fn ($w) => $w->whereNull('ends_on')->orWhere('ends_on', '>=', today()))
             ->orderBy('sort_order')->orderByDesc('id');
+    }
+
+    public function scopeForBusiness($q, ?int $businessId)
+    {
+        return $businessId ? $q->where('business_unit_id', $businessId) : $q;
     }
 
     public function getImageUrlAttribute(): ?string

@@ -73,7 +73,7 @@
                 <span class="chip self-start !bg-brand-white"><x-icon :name="$svc->business->icon_name" class="h-3.5 w-3.5 text-brand-orange" />{{ $svc->business->name }}</span>
                 <h3 class="mt-3 text-xl">{{ $svc->name }}</h3>
                 @if ($svc->summary ?? false)<p class="mt-1 line-clamp-2 text-sm text-brand-graphite">{{ $svc->summary }}</p>@endif
-                <p class="mt-3 text-sm font-bold text-brand-graphite"><span class="text-lg text-brand-orange">{{ $svc->price_label }} R{{ number_format($svc->price, 2) }}</span> &middot; <span class="inline-flex items-center gap-1 align-middle"><x-icon name="clock" class="h-4 w-4" />{{ $svc->duration_minutes }} min</span></p>
+                <p class="mt-3 text-sm font-bold text-brand-graphite"><span class="text-lg text-brand-orange">{{ $svc->price_text }}</span> &middot; <span class="inline-flex items-center gap-1 align-middle"><x-icon name="clock" class="h-4 w-4" />{{ $svc->duration_minutes }} min</span></p>
                 <a href="{{ route('portal.bookings.new', ['service' => $svc->id]) }}" class="btn-primary mt-5 self-start"><x-icon name="calendar-check" class="h-4 w-4" />Book now</a>
             </div>
         @endforeach

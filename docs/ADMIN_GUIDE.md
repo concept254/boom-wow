@@ -84,3 +84,15 @@ Also fill in **Short summary** and **Highlights** (one bullet per line). They ap
 
 ## Customer reviews
 Customers who are logged in can rate and review products and services. New reviews are **pending** and do not show publicly. Open **Customer Reviews**, set the status to **published** to approve one, and optionally write a public reply. Reviews from customers who bought the product or completed the booking are labelled "Verified".
+
+## Price on request (exclusive products)
+On a product (or service), tick **Price on request**. The price and Add to cart button are hidden; the page shows an "Exclusive" badge, "Price on request" and a **Request a quote** button that opens the contact form with the item filled in. Such products cannot be bought online. You can leave the price blank. Untick it to sell normally again.
+
+## Business pages (mini-sites)
+Open **Business Units** and edit a business to build its page:
+- **Our story** heading and text (blank line between paragraphs) and **Why choose us** key points.
+- **Photo gallery** at the bottom of the form: upload many photos, add captions, set the order, or remove them.
+- **Offers:** add a promotion under **Promotions & Adverts**, choose the business and set "Where it appears" to *A business's own page*.
+- **Articles:** add posts under **Blog & News**, choose the business. They appear on that business's page and can be filtered at `/news?business=slug`.
+- **Section switches:** tick or untick Our story, Gallery, Offers, Articles and Team to show or hide each section at any time. Services, products and the enquiry form appear automatically when there is something to show.
+To load starter copy for the six businesses (only fills empty fields): `php artisan db:seed --class=BusinessPortalSeeder --force`.

@@ -3,7 +3,7 @@
 <footer class="mt-8 bg-brand-charcoal text-brand-white">
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
-            <x-logo variant="dark" class="h-24 w-auto" />
+            <x-logo variant="dark" class="h-28 w-auto" />
             <p class="mt-4 max-w-xs text-sm text-gray-300">One destination, endless possibilities.</p>
         </div>
         <div>

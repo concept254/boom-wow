@@ -4,7 +4,7 @@
         <p class="flex items-center gap-1.5 text-xs font-semibold uppercase text-brand-orange"><x-icon :name="$svc->business->icon_name" class="h-4 w-4" />{{ $svc->business->name }}</p>
         <a href="{{ route('service', $svc) }}" class="mt-1 text-lg font-semibold hover:text-brand-orange">{{ $svc->name }}</a>
         @if (($svc->rating_count ?? 0) > 0)<x-rating-stars :value="$svc->rating_avg" :count="'('.$svc->rating_count.')'" class="mt-1.5" />@endif
-        <p class="mt-2 text-sm text-brand-graphite">{{ $svc->price_label }} <strong class="text-brand-charcoal">R{{ number_format($svc->price, 2) }}</strong> · {{ $svc->duration_minutes }} min</p>
+        <p class="mt-2 text-sm text-brand-graphite"><strong class="text-brand-charcoal">{{ $svc->price_text }}</strong> · {{ $svc->duration_minutes }} min</p>
         <div class="mt-auto flex flex-wrap gap-2 pt-4">
             @if ($svc->is_bookable && $svc->business->accepts_bookings)<a href="{{ route('portal.bookings.new', ['service' => $svc->id]) }}" class="btn-primary"><x-icon name="calendar-check" class="h-4 w-4" />Book now</a>@else<a href="{{ route('service', $svc) }}" class="btn-outline"><x-icon name="message" class="h-4 w-4" />Enquire</a>@endif
             <a href="{{ route('service', $svc) }}" class="btn-outline">Details</a>

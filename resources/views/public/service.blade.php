@@ -9,7 +9,7 @@
         '@context' => 'https://schema.org', '@type' => 'Service', 'name' => $service->name, 'url' => $url,
         'image' => array_column($slides, 'url'), 'description' => strip_tags((string) $service->description),
         'provider' => ['@type' => 'Organization', 'name' => $business->name],
-        'offers' => ['@type' => 'Offer', 'priceCurrency' => 'ZAR', 'price' => number_format((float) $service->price, 2, '.', '')],
+        'offers' => $service->price_on_request ? null : ['@type' => 'Offer', 'priceCurrency' => 'ZAR', 'price' => number_format((float) $service->price, 2, '.', '')],
     ];
     if ($stats['count'] > 0) {
         $ld['aggregateRating'] = ['@type' => 'AggregateRating', 'ratingValue' => $stats['avg'], 'reviewCount' => $stats['count']];
@@ -35,7 +35,7 @@
             @if ($stats['count'] > 0)<x-rating-stars :value="$stats['avg']" size="h-5 w-5" /><span class="text-sm font-bold">{{ number_format($stats['avg'], 1) }}</span><span class="text-sm text-brand-graphite underline">{{ $stats['count'] }} {{ \Illuminate\Support\Str::plural('review', $stats['count']) }}</span>
             @else<span class="text-sm text-brand-graphite underline">Be the first to review</span>@endif
         </a>
-        <p class="mt-5 font-display text-4xl font-bold text-brand-charcoal"><span class="text-base font-semibold text-brand-graphite">{{ $service->price_label }}</span> R{{ number_format($service->price, 2) }}</p>
+        <p class="mt-5 font-display text-4xl font-bold text-brand-charcoal">{{ $service->price_text }}</p>
         <p class="mt-2 flex items-center gap-2 text-sm text-brand-graphite"><x-icon name="clock" class="h-4 w-4 text-brand-orange" />About {{ $service->duration_minutes }} minutes</p>
 
         @if (! empty($service->highlights))
@@ -43,7 +43,8 @@
         @endif
 
         <div class="mt-6 flex flex-wrap gap-3">
-            @if ($bookable)<a href="{{ route('portal.bookings.new', ['service' => $service->id]) }}" class="btn-primary !px-8 !py-3 text-base"><x-icon name="calendar-check" class="h-5 w-5" />Book now</a>
+            @if ($service->price_on_request)<a href="{{ $service->quote_url }}" class="btn-primary !px-8 !py-3 text-base"><x-icon name="message" class="h-5 w-5" />Request a quote</a>
+            @elseif ($bookable)<a href="{{ route('portal.bookings.new', ['service' => $service->id]) }}" class="btn-primary !px-8 !py-3 text-base"><x-icon name="calendar-check" class="h-5 w-5" />Book now</a>
             @else<a href="{{ route('contact') }}" class="btn-primary !px-8 !py-3 text-base"><x-icon name="message" class="h-5 w-5" />Send an enquiry</a>@endif
             @if ($wa)<a href="{{ $ask }}" target="_blank" rel="noopener" class="btn-outline !px-6 !py-3"><x-icon name="whatsapp" class="h-5 w-5" />Ask on WhatsApp</a>@endif
         </div>

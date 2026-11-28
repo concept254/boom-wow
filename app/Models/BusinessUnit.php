@@ -17,6 +17,7 @@ class BusinessUnit extends Model
         'name', 'slug', 'type', 'enquiry_type', 'tagline', 'description', 'logo_path', 'cover_path', 'email', 'phone',
         'address', 'city', 'latitude', 'longitude', 'social_links', 'accepts_bookings', 'sells_products',
         'age_restricted', 'is_featured', 'status', 'sort_order', 'meta_title', 'meta_description',
+        'about_title', 'about_body', 'highlights', 'show_about', 'show_gallery', 'show_articles', 'show_promos', 'show_team',
     ];
 
     protected function casts(): array
@@ -27,6 +28,12 @@ class BusinessUnit extends Model
             'sells_products' => 'boolean',
             'age_restricted' => 'boolean',
             'is_featured' => 'boolean',
+            'highlights' => 'array',
+            'show_about' => 'boolean',
+            'show_gallery' => 'boolean',
+            'show_articles' => 'boolean',
+            'show_promos' => 'boolean',
+            'show_team' => 'boolean',
         ];
     }
 
@@ -165,6 +172,26 @@ class BusinessUnit extends Model
     public function packages(): HasMany
     {
         return $this->hasMany(ServicePackage::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(BusinessImage::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(BlogPost::class);
+    }
+
+    /** Gallery photos as [url, alt, caption] for the public lightbox grid. */
+    public function getGallerySlidesAttribute(): array
+    {
+        return $this->images->map(fn ($i) => [
+            'url' => Storage::disk('public')->url($i->path),
+            'alt' => $i->alt ?: $this->name,
+            'caption' => $i->alt,
+        ])->all();
     }
 
     public function bookings(): HasMany

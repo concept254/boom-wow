@@ -56,6 +56,11 @@ class ShopController extends Controller
     public function add(Request $request, CartService $cart, Product $product)
     {
         abort_unless($product->status === 'published', 404);
+
+        // Exclusive / price-on-request items are enquired about, never bought online.
+        if ($product->price_on_request) {
+            return redirect($product->quote_url);
+        }
         $cart->add($product, (int) $request->input('quantity', 1));
 
         // "Buy now" skips the cart page and goes straight to checkout.

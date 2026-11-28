@@ -88,3 +88,10 @@ Icons are inline SVGs (no icon font, no extra requests, no dependencies - safe f
 - Reviews are polymorphic (`reviews` table, `HasReviews` trait, `withRatings()` scope counts published reviews only). Submissions go through `ReviewController` and always start `pending`.
 - Page parts live in `resources/views/public/partials/` (`gallery`, `reviews`, `share`, `product-card`, `service-card`). Structured data (JSON-LD) is pushed to the `head` stack.
 - Not built: product variants with separate stock. Photo captions are display-only options.
+
+## Moving local data to the live site
+Content built locally (SQLite) can be moved to the live MySQL database:
+1. Locally: `php artisan site:export` creates `storage/app/site-export.jsonl`. Zip `storage/app/public` (uploaded images) too.
+2. Upload the `.jsonl` file to the server's `boom-wow/storage/app/` and extract the images zip into `boom-wow/storage/app/public/`.
+3. On the server (after `migrate`): `php artisan site:import --force`, then `php artisan optimize:clear` and the three cache commands.
+`site:import` empties every table found in the file and replaces it, including users, so the local admin login works live. Sessions, cache and jobs are not exported. Take a database backup first if the live site already has real data.

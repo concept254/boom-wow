@@ -51,7 +51,7 @@ class CartService
     /** @return Collection<int,array{product:Product,quantity:int,unit_price:string,line_total:string}> */
     public function lines(): Collection
     {
-        $products = Product::with(['business', 'inventory', 'images'])->published()->whereIn('id', array_keys($this->raw()))->get()->keyBy('id');
+        $products = Product::with(['business', 'inventory', 'images'])->published()->where('price_on_request', false)->whereIn('id', array_keys($this->raw()))->get()->keyBy('id');
 
         return collect($this->raw())->map(function ($qty, $id) use ($products) {
             $p = $products->get($id);

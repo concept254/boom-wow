@@ -159,6 +159,10 @@ class ResourceController extends Controller
 
         foreach ($cfg['fields'] as $f) {
             $name = $f['name'];
+            if ($name === 'sort_order' && ($data[$name] ?? null) === null) {
+                // A blank box arrives as null, which would override the column default (0) and fail NOT NULL.
+                $data[$name] = 0;
+            }
             if ($f['type'] === 'checkbox') {
                 $data[$name] = $request->boolean($name);
             } elseif ($f['type'] === 'lines') {
@@ -212,7 +216,8 @@ class ResourceController extends Controller
             ]);
         }
 
-        $next = (int) $row->images()->max('sort_order') + 1;
+        // reorder(): an ORDER BY on a bare MAX() query is rejected by MySQL's ONLY_FULL_GROUP_BY mode.
+        $next = (int) $row->images()->reorder()->max('sort_order') + 1;
         foreach ((array) $request->file('gallery', []) as $file) {
             $row->images()->create(['path' => ImageUploader::store($file, $cfg['permission'].'/gallery', 1600), 'sort_order' => $next++, 'is_primary' => false]);
         }

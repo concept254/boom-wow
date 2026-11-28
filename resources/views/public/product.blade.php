@@ -6,6 +6,7 @@
     $low = $qty !== null && $qty > 0 && $qty <= 5;
     $maxQty = $qty !== null ? max(1, min(99, $qty)) : 99;
     $onSale = $product->discount_percent > 0;
+    $onRequest = (bool) $product->price_on_request;
     $restricted = $product->is_age_restricted || $business->age_restricted;
     $wa = preg_replace('/\D/', '', (string) \App\Services\SettingsService::get('whatsapp_number', ''));
     $ask = 'https://wa.me/'.$wa.'?text='.rawurlencode("Hi, I'd like to know more about {$product->name} ".$url);
@@ -13,7 +14,7 @@
         '@context' => 'https://schema.org', '@type' => 'Product', 'name' => $product->name, 'sku' => $product->sku, 'url' => $url,
         'image' => array_column($slides, 'url'), 'description' => $product->short_description ?: strip_tags((string) $product->description),
         'brand' => $product->brand ? ['@type' => 'Brand', 'name' => $product->brand] : null,
-        'offers' => ['@type' => 'Offer', 'priceCurrency' => 'ZAR', 'price' => number_format((float) $product->current_price, 2, '.', ''), 'url' => $url,
+        'offers' => $product->price_on_request ? null : ['@type' => 'Offer', 'priceCurrency' => 'ZAR', 'price' => number_format((float) $product->current_price, 2, '.', ''), 'url' => $url,
             'availability' => 'https://schema.org/'.($product->in_stock ? 'InStock' : 'OutOfStock'), 'seller' => ['@type' => 'Organization', 'name' => $business->name]],
     ];
     if ($stats['count'] > 0) {
@@ -48,11 +49,17 @@
             @else<span class="text-sm text-brand-graphite underline">Be the first to review</span>@endif
         </a>
 
+        @if ($onRequest)
+            <div class="mt-5"><span class="badge bg-brand-charcoal text-brand-white">Exclusive</span>
+                <p class="mt-3 font-display text-3xl font-bold text-brand-charcoal">Price on request</p>
+                <p class="mt-1 text-sm text-brand-graphite">This is an exclusive item. Send us an enquiry and we will come back to you with the price and availability.</p></div>
+        @else
         <div class="mt-5 flex flex-wrap items-end gap-x-3 gap-y-1">
             <span class="font-display text-4xl font-bold text-brand-charcoal">R{{ number_format($product->current_price, 2) }}</span>
             @if ($onSale)<span class="pb-1 text-lg text-gray-400 line-through">R{{ number_format($product->price, 2) }}</span><span class="badge mb-1 bg-brand-orange text-brand-white">Save {{ $product->discount_percent }}%</span>@endif
         </div>
         @if ($onSale)<p class="mt-1 text-sm font-semibold text-green-700">You save R{{ number_format((float) $product->price - (float) $product->current_price, 2) }}@if ($product->promo_ends_at) &middot; offer ends {{ $product->promo_ends_at->format('j M Y') }}@endif</p>@endif
+        @endif
 
         @if ($product->short_description)<p class="mt-4 text-brand-graphite">{{ $product->short_description }}</p>@endif
 
@@ -63,7 +70,9 @@
         @endif
 
         <div class="mt-5">
-            @if (! $product->in_stock)
+            @if ($onRequest)
+                <p class="flex items-center gap-2 font-bold text-brand-graphite"><x-icon name="star" class="h-5 w-5 text-brand-orange" />Available on request</p>
+            @elseif (! $product->in_stock)
                 <p class="flex items-center gap-2 font-bold text-red-600"><x-icon name="alert" class="h-5 w-5" />Currently out of stock</p>
             @elseif ($low)
                 <p class="flex items-center gap-2 font-bold text-brand-orange-dark"><x-icon name="clock" class="h-5 w-5" />Only {{ $qty }} left in stock - order soon</p>
@@ -74,7 +83,11 @@
 
         @if ($restricted)<p class="mt-4 flex items-start gap-2 rounded border border-brand-orange bg-brand-offwhite p-3 text-sm"><x-icon name="alert" class="mt-0.5 h-4 w-4 text-brand-orange" />{{ \App\Services\SettingsService::get('liquor_notice', 'Enjoy responsibly. 18+ only.') }}</p>@endif
 
-        @if ($product->in_stock)
+        @if ($onRequest)
+            <div class="mt-6 flex flex-wrap gap-3">
+                <a href="{{ $product->quote_url }}" class="btn-primary !px-8 !py-3 text-base"><x-icon name="message" class="h-5 w-5" />Request a quote</a>
+            </div>
+        @elseif ($product->in_stock)
             <form method="POST" action="{{ route('cart.add', $product) }}" x-data="qtyStepper({{ $maxQty }})" class="mt-6">
                 @csrf
                 <p class="label">Quantity</p>
@@ -93,7 +106,7 @@
         @if ($wa)<a href="{{ $ask }}" target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-brand-graphite hover:text-green-600"><x-icon name="whatsapp" class="h-5 w-5" />Questions? Ask us on WhatsApp</a>@endif
 
         <ul class="mt-6 grid gap-3 rounded bg-brand-offwhite p-4 text-sm sm:grid-cols-3">
-            <li class="flex items-center gap-2"><x-icon name="lock" class="h-5 w-5 shrink-0 text-brand-orange" /><span class="font-semibold">Secure checkout</span></li>
+            <li class="flex items-center gap-2"><x-icon name="lock" class="h-5 w-5 shrink-0 text-brand-orange" /><span class="font-semibold">{{ $onRequest ? 'Private and confidential' : 'Secure checkout' }}</span></li>
             <li class="flex items-center gap-2"><x-icon name="truck" class="h-5 w-5 shrink-0 text-brand-orange" /><span class="font-semibold">Delivery or in-store collection</span></li>
             <li class="flex items-center gap-2"><x-icon name="message" class="h-5 w-5 shrink-0 text-brand-orange" /><span class="font-semibold">Friendly help from our team</span></li>
         </ul>
@@ -148,7 +161,7 @@
 @endif
 
 {{-- Sticky add-to-cart bar on phones once the buy box has scrolled away --}}
-@if ($product->in_stock)
+@if ($product->is_purchasable)
 <div x-data="{ show: false }" x-on:scroll.window.passive="show = window.scrollY > 700" x-cloak x-show="show" x-transition class="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-brand-white p-3 pr-20 shadow-[0_-4px_12px_rgba(0,0,0,.08)] lg:hidden">
     <form method="POST" action="{{ route('cart.add', $product) }}" class="mx-auto flex max-w-xl items-center gap-3">@csrf<input type="hidden" name="quantity" value="1">
         <div class="min-w-0 flex-1"><p class="truncate text-sm font-bold">{{ $product->name }}</p><p class="text-sm font-bold text-brand-orange">R{{ number_format($product->current_price, 2) }}</p></div>

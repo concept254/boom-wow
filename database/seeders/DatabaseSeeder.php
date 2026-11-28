@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ClothingBusinessSeeder::class,
             ContentSeeder::class,
             SiteContentSeeder::class,
+            BusinessPortalSeeder::class,
         ]);
 
         // Sample customers, bookings, orders, hero slides, adverts and team members. Turn off in production.

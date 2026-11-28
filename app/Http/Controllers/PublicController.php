@@ -120,7 +120,7 @@ class PublicController extends Controller
     public function business(BusinessUnit $business)
     {
         abort_unless($business->status === 'published', 404);
-        $business->load(['hours', 'staff' => fn ($q) => $q->where('is_active', true)]);
+        $business->load(['hours', 'images', 'staff' => fn ($q) => $q->where('is_active', true)]);
 
         return view('public.business', [
             'business' => $business,
@@ -130,6 +130,8 @@ class PublicController extends Controller
             'events' => $business->events()->published()->where('starts_at', '>=', now())->orderBy('starts_at')->limit(6)->get(),
             'portfolio' => $business->portfolioItems()->published()->limit(6)->get(),
             'packages' => $business->packages()->where('status', 'published')->get(),
+            'posts' => $business->show_articles ? $business->posts()->published()->latest('published_at')->limit(3)->get() : collect(),
+            'postCount' => $business->show_articles ? $business->posts()->published()->count() : 0,
         ]);
     }
 
@@ -247,7 +249,26 @@ class PublicController extends Controller
         return back()->with('status', 'Thank you - your enquiry has been received. We will be in touch shortly.');
     }
 
-    public function blog() { return view('public.blog', ['posts' => BlogPost::published()->latest('published_at')->paginate(9)]); }
+    public function blog(Request $request)
+    {
+        $filter = $request->filled('business') ? BusinessUnit::published()->where('slug', $request->string('business'))->first() : null;
 
-    public function blogPost(string $slug) { return view('public.blog-post', ['post' => BlogPost::published()->where('slug', $slug)->firstOrFail()]); }
+        return view('public.blog', [
+            'posts' => BlogPost::with('business')->published()->when($filter, fn ($q) => $q->where('business_unit_id', $filter->id))->latest('published_at')->paginate(9)->withQueryString(),
+            'filter' => $filter,
+            'businesses' => BusinessUnit::published()->orderBy('sort_order')->get(['id', 'name', 'slug']),
+        ]);
+    }
+
+    public function blogPost(string $slug)
+    {
+        $post = BlogPost::with('business')->published()->where('slug', $slug)->firstOrFail();
+
+        return view('public.blog-post', [
+            'post' => $post,
+            'more' => BlogPost::with('business')->published()->where('id', '!=', $post->id)
+                ->when($post->business_unit_id, fn ($q) => $q->where('business_unit_id', $post->business_unit_id))
+                ->latest('published_at')->limit(3)->get(),
+        ]);
+    }
 }
